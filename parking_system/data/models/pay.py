@@ -9,4 +9,4 @@ class Pay(Base):
     payment_date = Column(DateTime(), nullable=False)
     payment_time = Column(Time(), nullable= False)
     amount = Column(Float(precision=5), nullable=False)
-    id_employee = Column(String(4), ForeignKey('employee.id_employee'))
+    employee = Column(String(4), ForeignKey('employee.id_employee'))
