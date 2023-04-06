@@ -11,6 +11,7 @@ class Employee(Base):
     ci = Column(Integer, nullable=False)
     email = Column(String(70), nullable=False)
     password = Column(String(20), nullable=False)
+    phone = Column(String(8), nullable=False)
     date_of_hire = Column(DateTime(), nullable=False)
     salary = Column(Float(precision=5), nullable=False)
     register = Column(String(4), ForeignKey('administrator.id_administrator'))

@@ -1,8 +1,8 @@
-"""modify in tables ..
+"""new tables modifed
 
-Revision ID: 5247f022d68d
+Revision ID: 7f092f445782
 Revises: 
-Create Date: 2023-04-06 16:53:13.181557
+Create Date: 2023-04-06 17:30:56.414728
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '5247f022d68d'
+revision = '7f092f445782'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -25,7 +25,7 @@ def upgrade() -> None:
     sa.Column('ci', sa.Integer(), nullable=False),
     sa.Column('email', sa.String(length=70), nullable=False),
     sa.Column('password', sa.String(length=20), nullable=False),
-    sa.Column('phone', sa.Integer(), nullable=False),
+    sa.Column('phone', sa.String(length=8), nullable=False),
     sa.Column('address', sa.String(length=50), nullable=False),
     sa.PrimaryKeyConstraint('id_administrator')
     )
@@ -83,7 +83,7 @@ def upgrade() -> None:
     sa.Column('ci', sa.Integer(), nullable=False),
     sa.Column('email', sa.String(length=70), nullable=False),
     sa.Column('password', sa.String(length=20), nullable=False),
-    sa.Column('phone', sa.Integer(), nullable=False),
+    sa.Column('phone', sa.String(length=8), nullable=False),
     sa.Column('address', sa.String(length=50), nullable=False),
     sa.Column('id_parking', sa.String(length=4), nullable=True),
     sa.Column('register', sa.String(length=4), nullable=True),
@@ -100,6 +100,7 @@ def upgrade() -> None:
     sa.Column('ci', sa.Integer(), nullable=False),
     sa.Column('email', sa.String(length=70), nullable=False),
     sa.Column('password', sa.String(length=20), nullable=False),
+    sa.Column('phone', sa.String(length=8), nullable=False),
     sa.Column('date_of_hire', sa.DateTime(), nullable=False),
     sa.Column('salary', sa.Float(precision=5), nullable=False),
     sa.Column('register', sa.String(length=4), nullable=True),

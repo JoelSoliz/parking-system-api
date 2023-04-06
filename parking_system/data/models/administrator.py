@@ -11,5 +11,5 @@ class Administrator(Base):
     ci = Column(Integer, nullable=False)
     email = Column(String(70), nullable=False)
     password = Column(String(20), nullable=False)
-    phone = Column(Integer, nullable=False)
+    phone = Column(String(8), nullable=False)
     address = Column(String(50), nullable=False)
