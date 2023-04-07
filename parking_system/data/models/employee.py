@@ -14,5 +14,5 @@ class Employee(Base):
     phone = Column(String(8), nullable=False)
     hire_date = Column(DateTime(), nullable=False)
     salary = Column(Float(precision=5), nullable=False)
-    register_by = Column(String(4), ForeignKey('administrator.id_administrator'))
+    registered_by = Column(String(4), ForeignKey('administrator.id_administrator'))
     id_assignment = Column(String(4), ForeignKey('assignment_role.id_assignment'))
