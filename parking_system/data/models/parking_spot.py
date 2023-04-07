@@ -5,8 +5,10 @@ from data import Base
 
 class ParkingSpot(Base):
     __tablename__ = 'parking_spot'
-    id_site = Column(String(4), primary_key=True)
+    id_spot = Column(String(4), primary_key=True)
+    name = Column(String(4), nullable=False)
+    address = Column(String(4), nullable=False)
     state = Column(Boolean(), nullable=False)
     description = Column(String(200), nullable=False)
-    parking = Column(String(4), ForeignKey('parking.id_parking'))
     price = Column(String(4), ForeignKey('hourly_rate.id_price'))
+    id_hour = Column(String(4), ForeignKey('business_hours.id_hour'))

@@ -13,6 +13,5 @@ class Customer(Base):
     password = Column(String(20), nullable=False)
     phone = Column(String(8), nullable=False)
     address = Column(String(50), nullable=False)
-    id_parking = Column(String(4), ForeignKey('parking.id_parking'))
-    register = Column(String(4), ForeignKey('administrator.id_administrator'))
+    register_by = Column(String(4), ForeignKey('administrator.id_administrator'))
     id_assignment = Column(String(4), ForeignKey('assignment_role.id_assignment'))

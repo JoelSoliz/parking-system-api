@@ -9,6 +9,6 @@ class Claim(Base):
     subject = Column(String(20), nullable=False)
     description = Column(String(100), nullable=False)
     request = Column(String(50), nullable=False)
-    date_of_registration = Column(DateTime(), nullable=False)
+    registration_date = Column(DateTime(), nullable=False)
     performs = Column(String(4), ForeignKey('customer.id_customer'))
     

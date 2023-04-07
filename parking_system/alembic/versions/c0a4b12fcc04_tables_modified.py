@@ -1,8 +1,8 @@
-"""new tables modifed
+"""tables modified
 
-Revision ID: 7f092f445782
+Revision ID: c0a4b12fcc04
 Revises: 
-Create Date: 2023-04-06 17:30:56.414728
+Create Date: 2023-04-06 23:07:12.073989
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '7f092f445782'
+revision = 'c0a4b12fcc04'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -29,21 +29,22 @@ def upgrade() -> None:
     sa.Column('address', sa.String(length=50), nullable=False),
     sa.PrimaryKeyConstraint('id_administrator')
     )
+    op.create_table('business_hours',
+    sa.Column('id_hour', sa.String(length=4), nullable=False),
+    sa.Column('week_day', sa.DateTime(), nullable=False),
+    sa.Column('opnning_time', sa.DateTime(), nullable=False),
+    sa.Column('clousing_time', sa.DateTime(), nullable=False),
+    sa.PrimaryKeyConstraint('id_hour')
+    )
     op.create_table('hourly_rate',
     sa.Column('id_price', sa.String(length=4), nullable=False),
-    sa.Column('day_of_the_week', sa.Enum('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday', name='day_of_week_enum'), nullable=False),
+    sa.Column('week_day', sa.Enum('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday', name='day_of_week_enum'), nullable=False),
     sa.Column('hourly_rate', sa.Float(precision=5), nullable=False),
     sa.Column('daily_rate', sa.Float(precision=5), nullable=False),
     sa.Column('weekly_rate', sa.Float(precision=5), nullable=False),
     sa.Column('monthly_rate', sa.Float(precision=5), nullable=False),
     sa.Column('annual_rate', sa.Float(precision=5), nullable=False),
     sa.PrimaryKeyConstraint('id_price')
-    )
-    op.create_table('parking',
-    sa.Column('id_parking', sa.String(length=4), nullable=False),
-    sa.Column('name', sa.String(length=50), nullable=False),
-    sa.Column('address', sa.String(length=200), nullable=False),
-    sa.PrimaryKeyConstraint('id_parking')
     )
     op.create_table('role',
     sa.Column('id_role', sa.String(length=4), nullable=False),
@@ -57,24 +58,17 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['id_role'], ['role.id_role'], ),
     sa.PrimaryKeyConstraint('id_assignment')
     )
-    op.create_table('bussiness_hours',
-    sa.Column('id_hour', sa.String(length=4), nullable=False),
-    sa.Column('day_of_the_week', sa.DateTime(), nullable=False),
-    sa.Column('opnning_time', sa.DateTime(), nullable=False),
-    sa.Column('clousing_time', sa.DateTime(), nullable=False),
-    sa.Column('id_parking', sa.String(length=4), nullable=True),
-    sa.ForeignKeyConstraint(['id_parking'], ['parking.id_parking'], ),
-    sa.PrimaryKeyConstraint('id_hour')
-    )
     op.create_table('parking_spot',
-    sa.Column('id_site', sa.String(length=4), nullable=False),
+    sa.Column('id_spot', sa.String(length=4), nullable=False),
+    sa.Column('name', sa.String(length=4), nullable=False),
+    sa.Column('address', sa.String(length=4), nullable=False),
     sa.Column('state', sa.Boolean(), nullable=False),
     sa.Column('description', sa.String(length=200), nullable=False),
-    sa.Column('parking', sa.String(length=4), nullable=True),
     sa.Column('price', sa.String(length=4), nullable=True),
-    sa.ForeignKeyConstraint(['parking'], ['parking.id_parking'], ),
+    sa.Column('id_hour', sa.String(length=4), nullable=True),
+    sa.ForeignKeyConstraint(['id_hour'], ['business_hours.id_hour'], ),
     sa.ForeignKeyConstraint(['price'], ['hourly_rate.id_price'], ),
-    sa.PrimaryKeyConstraint('id_site')
+    sa.PrimaryKeyConstraint('id_spot')
     )
     op.create_table('customer',
     sa.Column('id_customer', sa.String(length=4), nullable=False),
@@ -85,12 +79,10 @@ def upgrade() -> None:
     sa.Column('password', sa.String(length=20), nullable=False),
     sa.Column('phone', sa.String(length=8), nullable=False),
     sa.Column('address', sa.String(length=50), nullable=False),
-    sa.Column('id_parking', sa.String(length=4), nullable=True),
-    sa.Column('register', sa.String(length=4), nullable=True),
+    sa.Column('register_by', sa.String(length=4), nullable=True),
     sa.Column('id_assignment', sa.String(length=4), nullable=True),
     sa.ForeignKeyConstraint(['id_assignment'], ['assignment_role.id_assignment'], ),
-    sa.ForeignKeyConstraint(['id_parking'], ['parking.id_parking'], ),
-    sa.ForeignKeyConstraint(['register'], ['administrator.id_administrator'], ),
+    sa.ForeignKeyConstraint(['register_by'], ['administrator.id_administrator'], ),
     sa.PrimaryKeyConstraint('id_customer')
     )
     op.create_table('employee',
@@ -101,12 +93,12 @@ def upgrade() -> None:
     sa.Column('email', sa.String(length=70), nullable=False),
     sa.Column('password', sa.String(length=20), nullable=False),
     sa.Column('phone', sa.String(length=8), nullable=False),
-    sa.Column('date_of_hire', sa.DateTime(), nullable=False),
+    sa.Column('hire_date', sa.DateTime(), nullable=False),
     sa.Column('salary', sa.Float(precision=5), nullable=False),
-    sa.Column('register', sa.String(length=4), nullable=True),
+    sa.Column('register_by', sa.String(length=4), nullable=True),
     sa.Column('id_assignment', sa.String(length=4), nullable=True),
     sa.ForeignKeyConstraint(['id_assignment'], ['assignment_role.id_assignment'], ),
-    sa.ForeignKeyConstraint(['register'], ['administrator.id_administrator'], ),
+    sa.ForeignKeyConstraint(['register_by'], ['administrator.id_administrator'], ),
     sa.PrimaryKeyConstraint('id_employee')
     )
     op.create_table('claims',
@@ -114,19 +106,19 @@ def upgrade() -> None:
     sa.Column('subject', sa.String(length=20), nullable=False),
     sa.Column('description', sa.String(length=100), nullable=False),
     sa.Column('request', sa.String(length=50), nullable=False),
-    sa.Column('date_of_registration', sa.DateTime(), nullable=False),
+    sa.Column('registration_date', sa.DateTime(), nullable=False),
     sa.Column('performs', sa.String(length=4), nullable=True),
     sa.ForeignKeyConstraint(['performs'], ['customer.id_customer'], ),
     sa.PrimaryKeyConstraint('id_claims')
     )
-    op.create_table('notify',
-    sa.Column('id_notify', sa.String(length=4), nullable=False),
+    op.create_table('notification',
+    sa.Column('id_notication', sa.String(length=4), nullable=False),
     sa.Column('request_date', sa.DateTime(), nullable=False),
     sa.Column('id_employee', sa.String(length=4), nullable=True),
     sa.Column('id_customer', sa.String(length=4), nullable=True),
     sa.ForeignKeyConstraint(['id_customer'], ['customer.id_customer'], ),
     sa.ForeignKeyConstraint(['id_employee'], ['employee.id_employee'], ),
-    sa.PrimaryKeyConstraint('id_notify')
+    sa.PrimaryKeyConstraint('id_notication')
     )
     op.create_table('pay',
     sa.Column('id_pay', sa.String(length=4), nullable=False),
@@ -134,7 +126,7 @@ def upgrade() -> None:
     sa.Column('payment_time', sa.Time(), nullable=False),
     sa.Column('amount', sa.Float(precision=5), nullable=False),
     sa.Column('employee', sa.String(length=4), nullable=True),
-    sa.ForeignKeyConstraint(['employee'], ['employee.id_employee'], ),
+    sa.ForeignKeyConstraint(['employee'], ['customer.id_customer'], ),
     sa.PrimaryKeyConstraint('id_pay')
     )
     op.create_table('reservation',
@@ -145,19 +137,19 @@ def upgrade() -> None:
     sa.Column('end_time', sa.Time(), nullable=False),
     sa.Column('use_duration', sa.String(length=20), nullable=False),
     sa.Column('id_customer', sa.String(length=4), nullable=True),
-    sa.Column('id_site', sa.String(length=4), nullable=True),
+    sa.Column('id_spot', sa.String(length=4), nullable=True),
     sa.ForeignKeyConstraint(['id_customer'], ['customer.id_customer'], ),
-    sa.ForeignKeyConstraint(['id_site'], ['parking_spot.id_site'], ),
+    sa.ForeignKeyConstraint(['id_spot'], ['parking_spot.id_spot'], ),
     sa.PrimaryKeyConstraint('id_reservation')
     )
     op.create_table('vehicle',
     sa.Column('id_vehicle', sa.String(length=4), nullable=False),
     sa.Column('license_plate', sa.String(length=8), nullable=False),
-    sa.Column('type_vehicle', sa.String(length=10), nullable=False),
+    sa.Column('vehicle_type', sa.String(length=10), nullable=False),
     sa.Column('color', sa.String(length=15), nullable=False),
     sa.Column('photo', sa.LargeBinary(length=4294967295), nullable=True),
     sa.Column('id_employee', sa.String(length=4), nullable=True),
-    sa.ForeignKeyConstraint(['id_employee'], ['employee.id_employee'], ),
+    sa.ForeignKeyConstraint(['id_employee'], ['customer.id_customer'], ),
     sa.PrimaryKeyConstraint('id_vehicle')
     )
     # ### end Alembic commands ###
@@ -168,15 +160,14 @@ def downgrade() -> None:
     op.drop_table('vehicle')
     op.drop_table('reservation')
     op.drop_table('pay')
-    op.drop_table('notify')
+    op.drop_table('notification')
     op.drop_table('claims')
     op.drop_table('employee')
     op.drop_table('customer')
     op.drop_table('parking_spot')
-    op.drop_table('bussiness_hours')
     op.drop_table('assignment_role')
     op.drop_table('role')
-    op.drop_table('parking')
     op.drop_table('hourly_rate')
+    op.drop_table('business_hours')
     op.drop_table('administrator')
     # ### end Alembic commands ###
