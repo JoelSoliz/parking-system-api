@@ -10,6 +10,6 @@ class Administrator(Base):
     last_name = Column(String(30), nullable=False)
     ci = Column(Integer, nullable=False)
     email = Column(String(70), nullable=False)
-    password = Column(String(20), nullable=False)
+    password = Column(String(60), nullable=False)
     phone = Column(String(8), nullable=False)
     address = Column(String(50), nullable=False)

@@ -1,4 +1,5 @@
-from sqlalchemy import Column, String, Integer, ForeignKey
+from datetime import datetime
+from sqlalchemy import Column, String, Integer, ForeignKey, DateTime
 
 from data import Base
 
@@ -10,8 +11,9 @@ class Customer(Base):
     last_name = Column(String(30), nullable=False)
     ci = Column(Integer, nullable=False)
     email = Column(String(70), nullable=False)
-    password = Column(String(20), nullable=False)
+    password = Column(String(60), nullable=False)
     phone = Column(String(8), nullable=False)
     address = Column(String(50), nullable=False)
     registered_by = Column(String(4), ForeignKey('administrator.id_administrator'))
     id_assignment = Column(String(4), ForeignKey('assignment_role.id_assignment'))
+    created_at= Column(DateTime(), default=datetime.now())

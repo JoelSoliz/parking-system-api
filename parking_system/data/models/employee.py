@@ -10,7 +10,7 @@ class Employee(Base):
     last_name = Column(String(30), nullable=False)
     ci = Column(Integer, nullable=False)
     email = Column(String(70), nullable=False)
-    password = Column(String(20), nullable=False)
+    password = Column(String(60), nullable=False)
     phone = Column(String(8), nullable=False)
     hire_date = Column(DateTime(), nullable=False)
     salary = Column(Float(precision=5), nullable=False)
