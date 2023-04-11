@@ -61,7 +61,7 @@ def get_employees(
 
 @employee_router.post("/", response_model=CreateEmployee, tags=["Employee"])
 def register_employee(
-    employee: CreateEmployee = Depends(),
+    employee: CreateEmployee,
     session: Session = Depends(get_db_session),
     administrator: Administrator = Depends(get_current_user),
 ):
