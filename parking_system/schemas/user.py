@@ -28,8 +28,8 @@ class UserCreate(UserBase, UserLogin):
 class User(UserBase):
     id_user: str
     role: str
-    user_permissions: list[Permission]
-    role_info: Role
+    user_permissions: list[Permission] | None = None
+    role_info: Role | None = None
 
     class Config:
         orm_mode = True
