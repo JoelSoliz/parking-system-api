@@ -9,4 +9,3 @@ class Notification(Base):
     request_date = Column(DateTime(), nullable=False)
     id_employee = Column(String(4), ForeignKey('employee.id_employee'))
     id_customer = Column(String(4), ForeignKey('customer.id_customer'))
-    

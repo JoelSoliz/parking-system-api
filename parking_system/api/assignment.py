@@ -21,7 +21,7 @@ def get_assignment(id, session: Session = Depends(get_db_session)):
 
 
 @assignment_router.post('register', response_model=AssignmentCreate, tags=['Assignment'])
-def register_assignment(id_role, assignment: AssignmentWithRole = Depends(), 
+def register_assignment(id_role, assignment: AssignmentWithRole = Depends(),
                         session: Session = Depends(get_db_session)):
     assignment_service = AssignmentService(session)
     return assignment_service.register_assignment(id_role, assignment)

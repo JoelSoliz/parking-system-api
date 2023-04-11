@@ -9,4 +9,3 @@ class BusinessHours(Base):
     week_day = Column(DateTime(), nullable=False)
     openning_time = Column(DateTime(), nullable=False)
     clousing_time = Column(DateTime(), nullable=False)
-    

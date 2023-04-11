@@ -4,14 +4,13 @@ from data.models import Role
 from schemas.role import RoleBase
 from .utils import generate_id
 
-class RoleService:  
+
+class RoleService:
     def __init__(self, session: Session):
         self.session = session
 
     def get_role(self, id_role):
-        role = self.session.query(Role).filter(
-            Role.id_role == id_role
-        )
+        role = self.session.query(Role).filter(Role.id_role == id_role)
         return role.first()
 
     def register_role(self, role: RoleBase):

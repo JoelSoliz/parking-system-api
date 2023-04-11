@@ -4,7 +4,7 @@ from jose import jwt, JWTError
 from config import get_settings
 
 from data import Session
-from services.auth import AuthenticationService
+from services.user import UserService
 
 
 def get_db_session():
@@ -20,7 +20,7 @@ config = get_settings()
 
 
 def get_current_user(session: Session = Depends(get_db_session),
-                      token: str = Depends(oauth2_scheme)):
+                     token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -35,9 +35,16 @@ def get_current_user(session: Session = Depends(get_db_session),
     except JWTError:
         raise credentials_exception
 
-    auth_service = AuthenticationService(session)
+    auth_service = UserService(session)
     user = auth_service.get_user_by_email(email)
     if user is None:
         raise credentials_exception
 
     return user
+
+
+def check_user_permission(session: Session = Depends(get_db_session),
+                          token: str = Depends(oauth2_scheme),
+                          required_role=None,
+                          required_permission=None):
+    pass

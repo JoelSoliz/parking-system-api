@@ -16,6 +16,7 @@ customer_router = APIRouter(prefix='/customer')
 def get_me(customer: CustomerBase = Depends(get_current_user)):
     return customer
 
+
 @customer_router.get("{id}", response_model=Customer, tags=['Customer'])
 def get_customer(id: str, session: Session = Depends(get_db_session)):
     customer_service = CustomerService(session)
@@ -25,21 +26,24 @@ def get_customer(id: str, session: Session = Depends(get_db_session)):
                             detail=f"posts id {id} not found. ")
     return customer
 
+
 @customer_router.get("/", response_model=CustomerPaginated, tags=["Customer"])
-def get_customers(current_page:int, session:Session = Depends(get_db_session), name=None):
+def get_customers(current_page: int, session: Session = Depends(get_db_session), name=None):
     customer_service = CustomerService(session)
     results = customer_service.get_customers(current_page, name=name)
     if not results['results']:
         raise HTTPException(status_code=404, detail="No customers found")
     return customer_service.get_customers(current_page, name=name)
 
+
 @customer_router.post('/register', response_model=CreateCustomer, tags=['Customer'])
-def register_customer(customer:CreateCustomer=Depends(), session:Session=Depends(get_db_session), 
+def register_customer(customer: CreateCustomer = Depends(), session: Session = Depends(get_db_session),
                       administrator: Administrator = Depends(get_current_user)):
     customer_service = CustomerService(session)
     administrator_service = AdministratorService(session)
     db_administrator = administrator_service.get_administrator_by_email(administrator.email)
     if not db_administrator:
-        raise HTTPException(status_code=403, detail="Only administrators can register new customers")
-    
+        raise HTTPException(
+            status_code=403, detail="Only administrators can register new customers")
+
     return customer_service.register_customer(administrator.id_administrator, customer)

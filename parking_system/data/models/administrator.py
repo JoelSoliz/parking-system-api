@@ -1,15 +1,14 @@
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, ForeignKey, String
+from sqlalchemy.orm import relationship
 
-from data import Base
+from .user import User
 
 
-class Administrator(Base):
+class Administrator(User):
     __tablename__ = 'administrator'
-    id_administrator = Column(String(4), primary_key= True)
-    name = Column(String(10), nullable=False)
-    last_name = Column(String(30), nullable=False)
-    ci = Column(Integer, nullable=False)
-    email = Column(String(70), nullable=False)
-    password = Column(String(60), nullable=False)
-    phone = Column(String(8), nullable=False)
-    address = Column(String(50), nullable=False)
+    id_administrator = Column(String(4), primary_key=True)
+    id_user = Column(String(4), ForeignKey('user.id_user'))
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'administrator',
+    }

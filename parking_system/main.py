@@ -3,8 +3,8 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api import role, assignment, administrator, customer, auth, employee, vehicle
-
+# from api import role, assignment, administrator, customer, auth, employee, vehicle
+from api import administrator
 
 app = FastAPI()
 app.add_middleware(
@@ -14,16 +14,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
-app.include_router(role.role_router)
-app.include_router(assignment.assignment_router)
+# app.include_router(role.role_router)
+# app.include_router(assignment.assignment_router)
 app.include_router(administrator.administrator_router)
-app.include_router(customer.customer_router)
-app.include_router(auth.auth_router)
-app.include_router(employee.employee_router)
-app.include_router(vehicle.vehicle_router)
+# app.include_router(customer.customer_router)
+# app.include_router(auth.auth_router)
+# app.include_router(employee.employee_router)
+# app.include_router(vehicle.vehicle_router)
+
+
 @app.get("/")
 async def root():
-    return { "message": "Welcome to Parking System API." }
+    return {"message": "Welcome to Parking System API."}
 
 
 if __name__ == "__main__":

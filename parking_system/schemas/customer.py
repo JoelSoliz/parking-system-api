@@ -1,32 +1,14 @@
 from pydantic import BaseModel
 
+from .user import User
 
-class CustomerBase(BaseModel):
-    email: str
 
-class CreateCustomer(CustomerBase):
-    id_assignment: str
-    name: str
-    last_name: str
-    ci: int
-    password: str
-    phone: str
-    address: str
-
-    class Config:
-        orm_mode = True
-
-class Customer(CustomerBase):
+class Customer(User):
     id_customer: str
-    name: str
-    last_name: str
-    ci: int
-    password: str
-    phone: str
-    address: str
 
     class Config:
         orm_mode = True
+
 
 class CustomerPaginated(BaseModel):
     results: list[Customer]
@@ -37,4 +19,3 @@ class CustomerPaginated(BaseModel):
 
     class Config:
         orm_mode = True
- 

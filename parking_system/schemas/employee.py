@@ -1,35 +1,26 @@
 from datetime import datetime
 from pydantic import BaseModel
 
+from .user import User
+
 
 class EmployeeBase(BaseModel):
-    email: str
-
-class CreateEmployee(EmployeeBase):
-    id_assignment: str
-    name: str
-    last_name: str
-    ci: int
-    password: str
-    phone: str
     hire_date: datetime
     salary: float
 
+
+class CreateEmployee(User, EmployeeBase):
     class Config:
         orm_mode = True
+
 
 class Employee(EmployeeBase):
     id_employee: str
-    name: str
-    last_name: str
-    ci: int
-    password: str
-    phone: str
-    hire_date: datetime
-    salary: float
+    registered_by: str
 
     class Config:
         orm_mode = True
+
 
 class EmployeePaginated(BaseModel):
     results: list[Employee]

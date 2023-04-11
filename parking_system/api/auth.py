@@ -19,6 +19,7 @@ def login_user(user: UserLogin, session: Session = Depends(get_db_session)):
 
     return auth_service.login_session(user)
 
+
 @auth_router.post('/token', response_model=UserToken, tags=["User"])
 def login_oauth(user: OAuth2PasswordRequestForm = Depends(), session: Session = Depends(get_db_session)):
     auth_service = AuthenticationService(session)
