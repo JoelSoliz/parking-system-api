@@ -1,6 +1,8 @@
 from datetime import datetime, time
 from pydantic import BaseModel
 
+from .customer import Customer
+
 
 class Reservation(BaseModel):
     id_reservation: str
@@ -11,6 +13,7 @@ class Reservation(BaseModel):
     use_duration: str
     id_customer: str
     id_spot: str
+    customer: Customer
 
     class Config:
         orm_mode = True
