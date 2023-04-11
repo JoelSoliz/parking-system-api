@@ -1,9 +1,6 @@
 from sqlalchemy.orm import Session, with_polymorphic, joinedload
 
 from data.models import Administrator, Customer, Employee, User
-from schemas.user import UserCreate
-from .constants import ROLES_ID
-from .utils import generate_id, get_hashed_password
 
 
 UserPoly = with_polymorphic(User, [Administrator, Customer, Employee])

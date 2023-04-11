@@ -2,23 +2,31 @@ import math
 from sqlalchemy.orm import Session
 
 from data.models.customer import Customer
-from schemas.customer import CreateCustomer
+from schemas.customer import Customer as CustomerSchema
+from schemas.user import UserCreate
+from services.user import UserService
+from .constants import ROLES_ID
 from .utils import generate_id, get_hashed_password
+
+
+CUSTOMER_TYPE = 'customer'
+
 
 class CustomerService():
     def __init__(self, session: Session):
         self.session = session
+        self.user_service = UserService(session)
+
+    def get_customer(self, id: str):
+        customer = self.session.query(Customer).filter(Customer.id_customer == id).first()
+        return customer
 
     def get_customer_by_email(self, email: str):
-        customer_filter = self.session.query(
-            Customer).filter(Customer.email == email.lower())
-        return customer_filter.first()
+        user = self.user_service.get_user_by_email(email)
+        if isinstance(user, Customer):
+            return CustomerSchema(**user.__dict__)
 
-    def get_customer(self, id:str):
-        customer = self.session.query(Customer).filter(
-            Customer.id_customer==id
-        ).first()
-        return customer
+        return bool(user)
 
     def get_customers(self, current_page, page_count=10, name=None):
         result_query = self.session.query(Customer)
@@ -49,15 +57,15 @@ class CustomerService():
 
         return data
 
-    def register_customer(self, resgitered_by, customer:CreateCustomer):
-        hashed_password = get_hashed_password(customer.password)
-        id_customer = generate_id()
-        db_customer = Customer(id_customer=id_customer, registered_by = resgitered_by, 
-                               id_assignment=customer.id_assignment,name=customer.name, 
-                               last_name=customer.last_name, ci=customer.ci, email=customer.email,password=hashed_password,
-                                phone=customer.phone, address=customer.address)
+    def register_customer(self, user: UserCreate):
+        id_user = generate_id()
+        hashed_password = get_hashed_password(user.password)
+        db_customer = Customer(id_user=id_user, id_customer=id_user, name=user.name,
+                               last_name=user.last_name, ci=user.ci,
+                               email=user.email.lower(), password=hashed_password,
+                               phone=user.phone, role=ROLES_ID.get(CUSTOMER_TYPE), user_type=CUSTOMER_TYPE)
         self.session.add(db_customer)
         self.session.commit()
         self.session.refresh(db_customer)
+
         return db_customer
-    

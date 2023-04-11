@@ -14,7 +14,7 @@ class AuthenticationService:
         self.user_service = UserService(session)
 
     def authenticate_user(self, user: UserLogin):
-        user_db = self.get_user_by_email(user.email)
+        user_db = self.user_service.get_user_by_email(user.email)
         return not (not user_db or not verify_password(user.password, user_db.password))
 
     def login_session(self, user: UserLogin):

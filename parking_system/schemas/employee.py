@@ -1,7 +1,7 @@
 from datetime import datetime
 from pydantic import BaseModel
 
-from .user import User
+from .user import User, UserCreate
 
 
 class EmployeeBase(BaseModel):
@@ -9,12 +9,12 @@ class EmployeeBase(BaseModel):
     salary: float
 
 
-class CreateEmployee(User, EmployeeBase):
+class CreateEmployee(UserCreate, EmployeeBase):
     class Config:
         orm_mode = True
 
 
-class Employee(EmployeeBase):
+class Employee(User, EmployeeBase):
     id_employee: str
     registered_by: str
 

@@ -1,18 +1,15 @@
-from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, status
-from fastapi.responses import Response
+from fastapi import APIRouter, Depends, UploadFile, File
 from sqlalchemy.orm import Session
 
 from .dependencies import get_current_user, get_db_session
 from schemas.vehicle import VehicleCreate
-from schemas.user import User
 from services.customer import Customer
 from services.vehicle import VehicleService
 
 vehicle_router = APIRouter(prefix='/vehicle')
 
-from .dependencies import get_current_user, get_db_session
 
-@vehicle_router.post('/register', response_model=VehicleCreate, tags=["Vehicle"])
+@vehicle_router.post('/', response_model=VehicleCreate, tags=["Vehicle"])
 def register_vehicle(
     vehicle: VehicleCreate = Depends(),
     photo: UploadFile = File(default=None),
