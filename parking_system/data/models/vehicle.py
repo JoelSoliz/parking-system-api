@@ -10,4 +10,4 @@ class Vehicle(Base):
     vehicle_type = Column(String(10), nullable=False)
     color = Column(String(15), nullable=False)
     photo = Column(LargeBinary((2**32)-1))
-    id_employee=Column(String(4), ForeignKey('customer.id_customer'))
+    id_customer = Column(String(4), ForeignKey('customer.id_customer'))

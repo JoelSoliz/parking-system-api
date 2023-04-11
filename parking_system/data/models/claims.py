@@ -11,4 +11,3 @@ class Claim(Base):
     request = Column(String(50), nullable=False)
     registration_date = Column(DateTime(), nullable=False)
     author = Column(String(4), ForeignKey('customer.id_customer'))
-    
