@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from api.dependencies import get_db_session, get_current_user
 from schemas.customer import CustomerPaginated, Customer
 from schemas.user import UserCreate
+from schemas.notification import NotificationBase
 from schemas.administrator import Administrator
 from services.customer import CustomerService
 from services.administrator import AdministratorService
@@ -33,6 +34,12 @@ def get_customer(id: str, session: Session = Depends(get_db_session), administra
 
     return customer
 
+@customer_router.get("/notification", response_model=NotificationBase, tags=['Customer'])
+def get_notification(customer: CustomerService = Depends(get_current_user)):
+    customer_service = CustomerService(Session)
+
+    return customer_service.get_notifications(customer.id_customer)
+    
 
 @customer_router.get("/", response_model=CustomerPaginated, tags=["Customer"])
 def get_customers(current_page: int, session: Session = Depends(get_db_session),

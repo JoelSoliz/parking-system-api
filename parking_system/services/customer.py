@@ -2,6 +2,7 @@ import math
 from sqlalchemy.orm import Session
 
 from data.models.customer import Customer
+from data.models.notification import Notification
 from schemas.customer import Customer as CustomerSchema
 from schemas.user import UserCreate
 from services.user import UserService
@@ -69,3 +70,11 @@ class CustomerService():
         self.session.refresh(db_customer)
 
         return db_customer
+    
+    def get_notifications(self, customer_id: str):
+        customer = self.get_customer(customer_id)
+        if customer:
+            notifications = self.session.query(Notification).filter(Notification.id_customer == customer_id).all()
+            return notifications
+        
+        return None

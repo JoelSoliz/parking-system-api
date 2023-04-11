@@ -56,7 +56,7 @@ class EmployeeService():
     def register_employee(self, registered_by, user: CreateEmployee):
         id_user = generate_id()
         hashed_password = get_hashed_password(user.password)
-        db_employee = Employee(id_user=id_user, id_customer=id_user, name=user.name,
+        db_employee = Employee(id_user=id_user, id_employee=id_user, name=user.name,
                                last_name=user.last_name, ci=user.ci,
                                email=user.email.lower(), password=hashed_password,
                                phone=user.phone, role=ROLES_ID.get(EMPLOYEE_TYPE), user_type=EMPLOYEE_TYPE,
