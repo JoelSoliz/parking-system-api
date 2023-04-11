@@ -6,15 +6,15 @@ from schemas.vehicle import VehicleCreate
 from services.customer import Customer
 from services.vehicle import VehicleService
 
-vehicle_router = APIRouter(prefix='/vehicle')
+vehicle_router = APIRouter(prefix="/vehicle")
 
 
-@vehicle_router.post('/', response_model=VehicleCreate, tags=["Vehicle"])
+@vehicle_router.post("/", response_model=VehicleCreate, tags=["Vehicle"])
 def register_vehicle(
-    vehicle: VehicleCreate = Depends(),
+    vehicle: VehicleCreate,
     photo: UploadFile = File(default=None),
     session: Session = Depends(get_db_session),
-    customer: Customer = Depends(get_current_user)
+    customer: Customer = Depends(get_current_user),
 ):
     vehicle_service = VehicleService(session)
     if photo:
