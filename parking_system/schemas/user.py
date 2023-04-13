@@ -10,7 +10,7 @@ class UserBase(BaseModel):
     ci: int
     email: str
     phone: str
-
+    notification_type: str
 
 class UserLogin(BaseModel):
     email: str
