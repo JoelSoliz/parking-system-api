@@ -67,13 +67,13 @@ def get_customers(
     return customer_service.get_customers(current_page, name=name)
 
 
-@customer_router.post("/", response_model=Customer, tags=["Customer"])
-def register_customer(customer: UserCreate, session: Session = Depends(get_db_session)):
+@customer_router.post('/', response_model=Customer, tags=['Customer'])
+def register_customer(notification_type:str, customer: UserCreate = Depends(), 
+                      session: Session = Depends(get_db_session)):
     customer_service = CustomerService(session)
     db_customer = customer_service.get_customer_by_email(customer.email)
     if db_customer:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered."
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail="Email already registered.")      
 
-    return customer_service.register_customer(customer)
+    return customer_service.register_customer(notification_type, customer)
