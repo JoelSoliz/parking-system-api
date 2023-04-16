@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from .user import User
+from .user import User, UserCreate
 
 
 class Customer(User):
@@ -8,6 +8,9 @@ class Customer(User):
 
     class Config:
         orm_mode = True
+
+class CustomerCreate(UserCreate):
+    notification_type: str
 
 
 class CustomerPaginated(BaseModel):

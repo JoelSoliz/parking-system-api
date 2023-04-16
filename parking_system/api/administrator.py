@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from api.dependencies import get_db_session, get_current_user
 from schemas.user import UserCreate
 from schemas.administrator import Administrator
+from data.models import Administrator as Admin
 from services.administrator import AdministratorService
 
 
@@ -11,7 +12,7 @@ administrator_router = APIRouter(prefix="/administrator")
 
 
 @administrator_router.get("/me", response_model=Administrator, tags=["Administrator"])
-def get_me(administrator: Administrator = Depends(get_current_user)):
+def get_me(administrator: Admin = Depends(get_current_user)):
     return administrator
 
 

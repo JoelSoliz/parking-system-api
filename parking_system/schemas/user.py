@@ -10,7 +10,7 @@ class UserBase(BaseModel):
     ci: int
     email: str
     phone: str
-
+    user_type: str
 
 class UserLogin(BaseModel):
     email: str
