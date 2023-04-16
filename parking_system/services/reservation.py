@@ -2,8 +2,9 @@ import math
 from sqlalchemy import desc, func
 from sqlalchemy.orm import Session, joinedload
 
-from schemas.reservation import Reservation as ReservationBase
+from schemas.reservation import Reservation, ReservationCreate
 from data.models.reservation import Reservation
+from .utils import generate_id, get_hashed_password
 
 
 class ReservationService:
@@ -41,8 +42,11 @@ class ReservationService:
 
         return data
     
-    def register_reservation(self, id_user: str, id_post, reservation: ReservationBase):
-        db_reservation = Reservation(id_user = id_user, id_post=id_post, 
+    def register_reservation(self, id_customer: str, id_spot, reservation: ReservationCreate):
+        id_reservation = generate_id()
+        db_reservation = Reservation(id_reservation = id_reservation,
+                                     id_spot = id_spot,
+                                    id_customer = id_customer,
                                     start_date=reservation.start_date,
                                     end_date=reservation.end_date,
                                     start_time=reservation.start_time,
