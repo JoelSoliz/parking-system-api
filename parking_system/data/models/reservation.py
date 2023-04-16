@@ -1,4 +1,6 @@
-from sqlalchemy import Column, String, DateTime, Time, ForeignKey
+from datetime import datetime
+
+from sqlalchemy import Column, String, Boolean, DateTime, Time, ForeignKey
 from sqlalchemy.orm import relationship
 
 from data import Base
@@ -11,7 +13,8 @@ class Reservation(Base):
     end_date = Column(DateTime(), nullable=False)
     start_time = Column(Time(), nullable=False)
     end_time = Column(Time(), nullable=False)
-    use_duration = Column(String(20), nullable=False)
+    status = Column(Boolean, nullable=True)
+    create_at = Column(DateTime(), default=datetime.now())
     id_customer = Column(String(4), ForeignKey("customer.id_customer"))
     id_spot = Column(String(4), ForeignKey("parking_spot.id_spot"))
 

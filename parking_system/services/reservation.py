@@ -2,7 +2,8 @@ import math
 from sqlalchemy import desc, func
 from sqlalchemy.orm import Session, joinedload
 
-from data.models import Reservation
+from schemas.reservation import Reservation as ReservationBase
+from data.models.reservation import Reservation
 
 
 class ReservationService:
@@ -39,3 +40,16 @@ class ReservationService:
             }
 
         return data
+    
+    def register_reservation(self, id_user: str, id_post, reservation: ReservationBase):
+        db_reservation = Reservation(id_user = id_user, id_post=id_post, 
+                                    start_date=reservation.start_date,
+                                    end_date=reservation.end_date,
+                                    start_time=reservation.start_time,
+                                    end_time=reservation.end_time,
+                                    )
+        self.session.add(db_reservation)
+        self.session.commit()
+        self.session.refresh(db_reservation)
+
+        return db_reservation

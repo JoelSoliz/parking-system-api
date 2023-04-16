@@ -10,7 +10,7 @@ class Reservation(BaseModel):
     end_date: datetime
     start_time: time
     end_time: time
-    use_duration: str
+    status: bool
     id_customer: str
     id_spot: str
     customer: Customer
