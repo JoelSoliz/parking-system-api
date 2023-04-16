@@ -11,7 +11,7 @@ vehicle_router = APIRouter(prefix="/vehicle")
 
 @vehicle_router.post("/", response_model=VehicleCreate, tags=["Vehicle"])
 def register_vehicle(
-    vehicle: VehicleCreate,
+    vehicle: VehicleCreate = Depends(),
     photo: UploadFile = File(default=None),
     session: Session = Depends(get_db_session),
     customer: Customer = Depends(get_current_user),

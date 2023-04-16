@@ -2,8 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from api.dependencies import get_db_session, get_current_user
-from schemas.customer import CustomerPaginated, Customer
-from schemas.user import UserCreate
+from schemas.customer import CustomerPaginated, Customer, CustomerCreate
 from schemas.administrator import Administrator
 from services.customer import CustomerService
 from services.administrator import AdministratorService
@@ -61,7 +60,7 @@ def get_customers(
 
 
 @customer_router.post("/", response_model=Customer, tags=["Customer"])
-def register_customer(customer: UserCreate, session: Session = Depends(get_db_session)):
+def register_customer(customer: CustomerCreate, session: Session = Depends(get_db_session)):
     customer_service = CustomerService(session)
     db_customer = customer_service.get_customer_by_email(customer.email)
     if db_customer:

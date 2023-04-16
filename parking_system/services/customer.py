@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from data.models.customer import Customer
 from schemas.customer import Customer as CustomerSchema
+from schemas.customer import CustomerCreate
 from schemas.user import UserCreate
 from services.user import UserService
 from .constants import ROLES_ID
@@ -57,13 +58,13 @@ class CustomerService():
 
         return data
 
-    def register_customer(self, user: UserCreate):
+    def register_customer(self, user: CustomerCreate):
         id_user = generate_id()
         hashed_password = get_hashed_password(user.password)
         db_customer = Customer(id_user=id_user, id_customer=id_user, name=user.name,
                                last_name=user.last_name, ci=user.ci,
                                email=user.email.lower(), password=hashed_password,
-                               phone=user.phone, role=ROLES_ID.get(CUSTOMER_TYPE), user_type=CUSTOMER_TYPE)
+                               phone=user.phone, notification_type=user.notification_type, role=ROLES_ID.get(CUSTOMER_TYPE), user_type=CUSTOMER_TYPE)
         self.session.add(db_customer)
         self.session.commit()
         self.session.refresh(db_customer)
