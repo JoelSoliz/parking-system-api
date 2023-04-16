@@ -59,7 +59,7 @@ def get_customers(
     return customer_service.get_customers(current_page, name=name)
 
 
-@customer_router.post("/", response_model=CustomerCreate, tags=["Customer"])
+@customer_router.post("/", response_model=Customer, tags=["Customer"])
 def register_customer(customer: CustomerCreate, session: Session = Depends(get_db_session)):
     customer_service = CustomerService(session)
     db_customer = customer_service.get_customer_by_email(customer.email)
