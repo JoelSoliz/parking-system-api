@@ -29,9 +29,9 @@ def get_reservation(
     return role_service.get_reservations(current_page)
 
 @reservation_router.post("/reservation", response_model=Reservation, tags=["Reservation"])
-def register_reservation(id_spot, reservation: ReservationCreate = Depends(), 
+def register_reservation(reservation: ReservationCreate, 
                          session: Session = Depends(get_db_session), 
                          user: Customer = Depends(get_current_user)):
     reservation_service = ReservationService(session)
     
-    return reservation_service.register_reservation( user.id_customer, id_spot, reservation)
+    return reservation_service.register_reservation( user.id_customer, reservation)

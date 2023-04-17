@@ -42,10 +42,10 @@ class ReservationService:
 
         return data
     
-    def register_reservation(self, id_customer: str, id_spot, reservation: ReservationCreate):
+    def register_reservation(self, id_customer: str, reservation: ReservationCreate):
         id_reservation = generate_id()
         db_reservation = Reservation(id_reservation = id_reservation,
-                                     id_spot = id_spot,
+                                     id_spot = reservation.id_spot,
                                     id_customer = id_customer,
                                     start_date=reservation.start_date,
                                     end_date=reservation.end_date,
