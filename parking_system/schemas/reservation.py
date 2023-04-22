@@ -1,4 +1,5 @@
-from datetime import datetime, time
+from typing import Optional
+from datetime import datetime, time, date
 from pydantic import BaseModel
 
 from .customer import Customer
@@ -8,9 +9,7 @@ class Reservation(BaseModel):
     id_reservation: str
     start_date: datetime
     end_date: datetime
-    start_time: time
-    end_time: time
-    use_duration: str
+    status: bool
     id_customer: str
     id_spot: str
     customer: Customer
@@ -18,6 +17,17 @@ class Reservation(BaseModel):
     class Config:
         orm_mode = True
 
+class ReservationCreate(BaseModel):
+    start_date: date
+    end_date: date
+    id_spot: str
+    day : list[str]
+    start_time: list[time]
+    end_time: list[time]
+
+    class Config:
+        orm_mode = True
+    
 
 class ReservationPaginated(BaseModel):
     results: list[Reservation]
