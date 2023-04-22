@@ -2,9 +2,10 @@ import math
 from sqlalchemy import desc, func
 from sqlalchemy.orm import Session, joinedload
 
-from schemas.reservation import Reservation, ReservationCreate
+from schemas.reservation import ReservationCreate
 from data.models.reservation import Reservation
-from .utils import generate_id, get_hashed_password
+from data.models.week_day import WeekDay
+from .utils import generate_id
 
 
 class ReservationService:
@@ -45,15 +46,27 @@ class ReservationService:
     def register_reservation(self, id_customer: str, reservation: ReservationCreate):
         id_reservation = generate_id()
         db_reservation = Reservation(id_reservation = id_reservation,
-                                     id_spot = reservation.id_spot,
+                                    id_spot = reservation.id_spot,
                                     id_customer = id_customer,
-                                    start_date=reservation.start_date,
-                                    end_date=reservation.end_date,
-                                    start_time=reservation.start_time,
-                                    end_time=reservation.end_time,
+                                    start_date = reservation.start_date,
+                                    end_date = reservation.end_date,
                                     )
+        
         self.session.add(db_reservation)
+        self.register_days(id_reservation, reservation.start_time, reservation.end_time, reservation.day)
         self.session.commit()
         self.session.refresh(db_reservation)
 
         return db_reservation
+    
+    def register_days(self, id_reservation, start_times, end_times, days):
+        for start, end, day in zip(start_times, end_times, days):
+            id_day = generate_id()
+            db_day = WeekDay(
+                id_day=id_day,
+                id_reservation=id_reservation,
+                day=day,
+                start_time=start,
+                end_time=end
+            )
+            self.session.add(db_day)
