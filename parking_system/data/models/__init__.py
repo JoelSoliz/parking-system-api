@@ -14,3 +14,4 @@ from .role_permission import RolePermission
 from .role import Role
 from .user_permission import UserPermission
 from .user import User
+from .week_day import WeekDay

@@ -4,7 +4,7 @@ import uvicorn
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api import administrator, auth, customer, employee, reservations, role, vehicle
+from api import administrator, auth, customer, employee, reservations, role, vehicle, parking
 from api.dependencies import get_current_user
 from data.models import Administrator, Customer, Employee
 from schemas.administrator import Administrator as ASchema
@@ -27,7 +27,7 @@ app.include_router(employee.employee_router)
 app.include_router(reservations.reservation_router)
 app.include_router(role.role_router)
 app.include_router(vehicle.vehicle_router)
-
+app.include_router(parking.parking_router)
 
 @app.get("/")
 async def root():
