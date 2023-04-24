@@ -4,8 +4,10 @@ from sqlalchemy.orm import Session
 from api.dependencies import get_db_session, get_current_user
 from schemas.administrator import Administrator
 from schemas.employee import CreateEmployee, EmployeePaginated, Employee
+from schemas.parking_spot import ParkingPaginated
 from services.administrator import AdministratorService
 from services.employee import EmployeeService
+from data.models.employee import Employee as Employ
 
 
 employee_router = APIRouter(prefix="/employee")

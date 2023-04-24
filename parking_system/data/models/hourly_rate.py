@@ -1,4 +1,5 @@
 from sqlalchemy import Column, String, Float, Enum
+from sqlalchemy.orm import relationship
 
 from data import Base
 
@@ -13,3 +14,5 @@ class HourlyRate(Base):
     weekly_rate = Column(Float(precision=5), nullable=False)
     monthly_rate = Column(Float(precision=5), nullable=False)
     annual_rate = Column(Float(precision=5), nullable=False)
+    
+    parking_spots = relationship("ParkingSpot", back_populates="hourly_rate")

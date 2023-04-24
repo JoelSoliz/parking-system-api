@@ -6,6 +6,7 @@ from schemas.customer import CustomerPaginated, Customer, CustomerCreate
 from schemas.administrator import Administrator
 from services.customer import CustomerService
 from services.administrator import AdministratorService
+from data.models.administrator import Administrator as Admin
 
 
 customer_router = APIRouter(prefix="/customer")

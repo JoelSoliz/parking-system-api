@@ -2,6 +2,7 @@ import math
 from sqlalchemy.orm import Session
 
 from data.models.employee import Employee
+from data.models.parking_spot import ParkingSpot
 from schemas.employee import CreateEmployee, Employee as EmployeeSchema
 from .constants import ROLES_ID
 from .user import UserService
