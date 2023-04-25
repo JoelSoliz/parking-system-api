@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from api.dependencies import get_db_session, get_current_user
-from schemas.parking_spot import ParkingBase, ParkingPaginated, ShowParking, ParkingRegister
+from schemas.parking_spot import ParkingBase, ParkingPaginated, ShowParking, ParkingRegister, Parking
 from schemas.business_hours import BussinesUpdate, BussinesHours
 from services.parking_service import ParkingService
 from services.employee import EmployeeService
@@ -29,19 +29,11 @@ def get_parking_spot(id: str, session: Session = Depends(get_db_session),
     return parking_service.get_parking_spot(id)
 
 
-@parking_router.get("/", response_model=ParkingPaginated, tags=["Parking"])
-def get_parking_spots(current_page: int, session: Session = Depends(get_db_session), 
-                      employee:Employee = Depends(get_current_user)):
+@parking_router.get("/", response_model=list[ShowParking], tags=["Parking"])
+def get_parking_spots(session: Session = Depends(get_db_session)):
     parking_spot = ParkingService(session)
-    employee_service = EmployeeService(session)
-    db_employee = employee_service.get_employee_by_email(employee.email)
-    if isinstance(db_employee, bool) or not db_employee:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You don't have permission to list parking spot.",
-        )
-    
-    return parking_spot.get_parking_spots(current_page)
+
+    return parking_spot.get_parking_spots()
 
 @parking_router.put("/{id}", response_model=BussinesHours, tags=["Parking"])
 def update_hour_parking(id: str, 

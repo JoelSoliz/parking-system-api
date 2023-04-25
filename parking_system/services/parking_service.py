@@ -24,31 +24,10 @@ class ParkingService:
 
         return parking_spot.first()
 
-    def get_parking_spots(self, current_page, page_count=10):
-        result_query = self.session.query(ParkingSpot)
+    def get_parking_spots(self):
+        result_query = self.session.query(ParkingSpot).all()
 
-        results = result_query.offset(
-            (current_page - 1) * page_count).limit(page_count).all()
-        count_data = result_query.count()
-
-        if count_data:
-            data = {
-                'results': [parking.__dict__ for parking in results],
-                'current_page': current_page,
-                'total_pages': math.ceil(count_data / page_count),
-                'total_elements': count_data,
-                'element_per_page': page_count
-            }
-        else:
-            data = {
-                'results': [],
-                'current_page': 0,
-                'total_pages': 0,
-                'total_elements': 0,
-                'element_per_page': 0
-            }
-
-        return data
+        return result_query
 
     def register_parking_spot(self, parking: ParkingRegister):
         id_parking = generate_id()

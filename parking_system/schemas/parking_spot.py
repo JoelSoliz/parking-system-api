@@ -35,13 +35,3 @@ class ShowParking(Parking):
 
     class Config:
         orm_mode = True
-
-class ParkingPaginated(BaseModel):
-    results: list[Parking]
-    current_page: int
-    total_pages: int
-    total_elements: int
-    element_per_page: int
-
-    class Config:
-        orm_mode = True
