@@ -35,9 +35,3 @@ class ShowParking(Parking):
 
     class Config:
         orm_mode = True
-
-class ParkingPaginated(ParkingBase):
-    parking_spots: str
-
-    class Config:
-        orm_mode = True
