@@ -11,6 +11,7 @@ class Reservation(BaseModel):
     status: bool
     id_customer: str
     id_spot: str
+    create_at: datetime
     customer: Customer
 
     class Config:
