@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from api.dependencies import get_db_session, get_current_user
 from schemas.parking_spot import ParkingBase, ParkingPaginated, ShowParking, ParkingRegister
+from schemas.business_hours import BussinesUpdate, BussinesHours
 from services.parking_service import ParkingService
 from services.employee import EmployeeService
 from services.administrator import AdministratorService
@@ -41,6 +42,21 @@ def get_parking_spots(current_page: int, session: Session = Depends(get_db_sessi
         )
     
     return parking_spot.get_parking_spots(current_page)
+
+@parking_router.put("/{id}", response_model=BussinesHours, tags=["Parking"])
+def update_hour_parking(id: str, 
+                        hour: BussinesUpdate = Depends(), 
+                        session: Session = Depends(get_db_session),
+                        _: Administrator = Depends(get_current_user)):
+    parking_service = ParkingService(session)
+    get_hour = parking_service.get_hour(id)
+    if(not get_hour):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Bussines Hour {id} not found. ")
+    parking_service.update_hour(id, hour, get_hour)
+
+    return get_hour
+
 
 @parking_router.post("/", response_model=ParkingBase, tags=["Parking"])
 def register_parking(parking: ParkingRegister, session: Session = Depends(get_db_session),

@@ -2,7 +2,7 @@ from datetime import datetime, time, date
 from pydantic import BaseModel
 
 from .customer import Customer
-
+from .parking_spot import ParkingBase
 
 class Reservation(BaseModel):
     id_reservation: str
@@ -15,6 +15,14 @@ class Reservation(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class ShowReservation(Reservation):
+    parking_spot: ParkingBase
+
+    class Config:
+        orm_mode = True
+    
 
 class ReservationCreate(BaseModel):
     start_date: date

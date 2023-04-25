@@ -17,4 +17,4 @@ class Reservation(Base):
     id_spot = Column(String(4), ForeignKey("parking_spot.id_spot"))
 
     customer = relationship("Customer", back_populates="reservations")
-    # weekdays = relationship("WeekDay", back_populates="reservation")    
+    parking_spot = relationship("ParkingSpot", back_populates="reservations")   
