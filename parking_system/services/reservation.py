@@ -12,6 +12,17 @@ class ReservationService:
     def __init__(self, session: Session):
         self.session = session
 
+    def get_reservation(self, id_reservation: str):
+        reservation = (self.session.query(Reservation)
+                    .options(
+                        joinedload(Reservation.customer),
+                        joinedload(Reservation.parking_spot)
+                    )
+                    .filter(Reservation.id_reservation == id_reservation)
+        )
+
+        return reservation.first()
+
     def get_reservations(self, current_page, page_count=10):
         result_query = self.session.query(Reservation)
         results = (
@@ -26,7 +37,7 @@ class ReservationService:
 
         if count_data:
             data = {
-                "results": [customer.__dict__ for customer in results],
+                "results": [employee.__dict__ for employee in results],
                 "current_page": current_page,
                 "total_pages": math.ceil(count_data / page_count),
                 "total_elements": count_data,

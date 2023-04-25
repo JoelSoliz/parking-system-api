@@ -10,3 +10,8 @@ class BussinesHours(BaseModel):
 
     class Config:
         orm_mode = True
+
+class BussinesUpdate(BaseModel):
+    openning_time: datetime
+    clousing_time: datetime
+    days: str

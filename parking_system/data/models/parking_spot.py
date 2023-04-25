@@ -15,3 +15,4 @@ class ParkingSpot(Base):
 
     business_hours = relationship("BusinessHours", back_populates="parking_spots")
     hourly_rate = relationship("HourlyRate", back_populates= "parking_spots")
+    reservations = relationship("Reservation", back_populates= "parking_spot")
