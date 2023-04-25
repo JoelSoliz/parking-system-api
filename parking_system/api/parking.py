@@ -71,3 +71,18 @@ def register_parking(parking: ParkingRegister, session: Session = Depends(get_db
         )
     
     return parking_service.register_parking_spot(parking)
+
+@parking_router.post("/register-hour", response_model=BussinesHours, tags=["Parking"])
+def register_business_hour(business:BussinesHours,
+                           session: Session = Depends(get_db_session), 
+                           administrator: Administrator = Depends(get_current_user)):
+    parking_service = ParkingService(session)
+    administrator_service = AdministratorService(session)
+    db_administrator = administrator_service.get_administrator_by_email(administrator.email)
+    if isinstance(db_administrator, bool) or not db_administrator:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You don't have permission to register business hour.",
+        )
+    
+    return parking_service.register_business_hour(business)

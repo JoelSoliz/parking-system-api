@@ -3,7 +3,7 @@ import math
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm import Session
 from schemas.parking_spot import ParkingRegister
-from schemas.business_hours import BussinesUpdate
+from schemas.business_hours import BussinesUpdate, BussinesHours
 from data.models.business_hours import BusinessHours
 from data.models.parking_spot import ParkingSpot
 from .utils import generate_id
@@ -62,6 +62,18 @@ class ParkingService:
         self.session.refresh(db_parking_spot)
 
         return db_parking_spot
+    
+    def register_business_hour(self, business_hours: BussinesHours):
+        id_hour = generate_id()
+        db_business_hour = BusinessHours(id_hour = id_hour, openning_time = business_hours.openning_time,
+                                         clousing_time = business_hours.clousing_time,
+                                         days = business_hours.days)
+        self.session.add(db_business_hour)
+        self.session.commit()
+        self.session.refresh(db_business_hour)
+
+        return db_business_hour
+
 
     def get_hour(self, id_hour: str):
         db_get_hour = self.session.query(BusinessHours).filter(
