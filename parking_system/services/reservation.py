@@ -1,3 +1,4 @@
+from datetime import date
 import math
 from sqlalchemy import desc, func
 from sqlalchemy.orm import Session, joinedload
@@ -26,7 +27,7 @@ class ReservationService:
     def get_reservations(self, current_page, page_count=10):
         result_query = self.session.query(Reservation)
         results = (
-            result_query.filter(Reservation.start_date >= func.now())
+            result_query.filter(Reservation.start_date >= date.today())
             .options(joinedload(Reservation.customer))
             .order_by(desc(func.timediff(Reservation.end_date, Reservation.start_date)))
             .offset((current_page - 1) * page_count)
