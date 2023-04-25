@@ -25,10 +25,9 @@ class ReservationService:
         return reservation.first()
 
     def get_reservations(self, current_page, page_count=10):
-        result_query = self.session.query(Reservation)
+        result_query = self.session.query(Reservation).filter(Reservation.start_date >= date.today())
         results = (
-            result_query.filter(Reservation.start_date >= date.today())
-            .options(joinedload(Reservation.customer))
+            result_query.options(joinedload(Reservation.customer))
             .order_by(desc(func.timediff(Reservation.end_date, Reservation.start_date)))
             .offset((current_page - 1) * page_count)
             .limit(page_count)
