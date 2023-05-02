@@ -15,3 +15,5 @@ from .role import Role
 from .user_permission import UserPermission
 from .user import User
 from .week_day import WeekDay
+from .reservation_assignment import ReservationAssignment
+from .assignment_rate import AssignmentRate

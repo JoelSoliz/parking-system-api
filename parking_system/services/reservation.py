@@ -4,8 +4,11 @@ from sqlalchemy import desc, func
 from sqlalchemy.orm import Session, joinedload
 
 from schemas.reservation import ReservationCreate
+from schemas.assignment_reservation import AssignmentUpdate, ReservationWithParkingAndAssignment as Assignment
 from data.models.reservation import Reservation
+from data.models.reservation_assignment import ReservationAssignment
 from data.models.week_day import WeekDay
+from data.models.reservation_assignment import ReservationAssignment
 from .utils import generate_id
 
 
@@ -13,13 +16,13 @@ class ReservationService:
     def __init__(self, session: Session):
         self.session = session
 
-    def get_reservation(self, id_reservation: str):
-        reservation = (self.session.query(Reservation)
+    def get_reservation(self, id_assignment: str):
+        reservation = (self.session.query(ReservationAssignment)
                     .options(
-                        joinedload(Reservation.customer),
-                        joinedload(Reservation.parking_spot)
+                        joinedload(ReservationAssignment.parking_spots),
+                        joinedload(ReservationAssignment.reservations)
                     )
-                    .filter(Reservation.id_reservation == id_reservation)
+                    .filter(ReservationAssignment.id_assignment == id_assignment)
         )
 
         return reservation.first()
@@ -56,8 +59,7 @@ class ReservationService:
     
     def register_reservation(self, id_customer: str, reservation: ReservationCreate):
         id_reservation = generate_id()
-        db_reservation = Reservation(id_reservation = id_reservation,
-                                    id_spot = reservation.id_spot,
+        db_reservation = Reservation(id_reservation = id_reservation, 
                                     id_customer = id_customer,
                                     start_date = reservation.start_date,
                                     end_date = reservation.end_date,
@@ -65,6 +67,10 @@ class ReservationService:
         
         self.session.add(db_reservation)
         self.register_days(id_reservation, reservation.start_time, reservation.end_time, reservation.day)
+        self.register_assignment_reservation(reservation.id_spot, 
+                                             id_reservation, 
+                                             reservation.id_assignment_rate)
+
         self.session.commit()
         self.session.refresh(db_reservation)
 
@@ -81,3 +87,26 @@ class ReservationService:
                 end_time=end
             )
             self.session.add(db_day)
+
+    def register_assignment_reservation(self, id_spot, id_reservation:str, id_assignment:str):
+        id = generate_id()
+        db_assignment = ReservationAssignment(id_assignment = id, status = 'Reserved',
+                                   id_spot = id_spot, id_reservation = id_reservation,
+                                   id_assignment_rate = id_assignment)
+        
+        self.session.add(db_assignment)
+        
+        return db_assignment
+    
+    def get_reservation_assignment(self, id: str):
+        return self.session.query(ReservationAssignment).filter(ReservationAssignment.id_assignment == id).first()
+
+    def update_reservation_assignment(self, id: str, reservation: AssignmentUpdate, get_assignment):
+        self.session.query(ReservationAssignment).filter(
+            ReservationAssignment.id_assignment == id).update({'status': reservation.status,
+                                                'id_spot': reservation.id_spot, 
+                                                'id_assignment_rate': reservation.id_assignment_rate})
+        self.session.commit()
+        self.session.refresh(get_assignment)
+
+        return get_assignment

@@ -11,10 +11,12 @@ class Reservation(Base):
     id_reservation = Column(String(4), primary_key=True)
     start_date = Column(Date(), nullable=False)
     end_date = Column(Date(), nullable=False)
-    status = Column(Boolean, default=False)
+    # status = Column(Boolean, default=False)
     create_at = Column(DateTime(), default=datetime.now())
     id_customer = Column(String(4), ForeignKey("customer.id_customer"))
-    id_spot = Column(String(4), ForeignKey("parking_spot.id_spot"))
+    # id_spot = Column(String(4), ForeignKey("parking_spot.id_spot"))
 
     customer = relationship("Customer", back_populates="reservations")
-    parking_spot = relationship("ParkingSpot", back_populates="reservations")   
+    reservation_assignment = relationship("ReservationAssignment", back_populates="reservations")
+
+    # parking_spot = relationship("ParkingSpot", back_populates="reservations")   

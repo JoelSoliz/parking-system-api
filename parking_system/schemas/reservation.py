@@ -8,9 +8,7 @@ class Reservation(BaseModel):
     id_reservation: str
     start_date: datetime
     end_date: datetime
-    status: bool
     id_customer: str
-    id_spot: str
     create_at: datetime
     customer: Customer
 
@@ -19,7 +17,8 @@ class Reservation(BaseModel):
 
 
 class ShowReservation(Reservation):
-    parking_spot: ParkingBase
+    parking_spots: ParkingBase
+    reservations: Reservation
 
     class Config:
         orm_mode = True
@@ -28,7 +27,10 @@ class ShowReservation(Reservation):
 class ReservationCreate(BaseModel):
     start_date: date
     end_date: date
-    id_spot: str
+
+    id_spot: str #nuevo
+    id_assignment_rate: str #nuevo
+    
     day : list[str]
     start_time: list[time]
     end_time: list[time]
