@@ -5,13 +5,14 @@ from sqlalchemy.orm import Session
 from api.dependencies import get_db_session, get_current_user
 from data.models import Administrator, Employee, Customer
 from schemas.reservation import ReservationPaginated, Reservation, ReservationCreate, ShowReservation
+from schemas.assignment_reservation import ReservationAndParkingSpot, AssignmentBase, AssignmentUpdate
 from services.reservation import ReservationService
 
 
 reservation_router = APIRouter(prefix="/reservation")
 
 
-@reservation_router.get("/{id}", response_model=ShowReservation, tags=["Reservation"])
+@reservation_router.get("/{id}", response_model=ReservationAndParkingSpot, tags=["Reservation"])
 def get_reservation(id: str, session: Session = Depends(get_db_session),
                     user: Union[Administrator, Employee] = Depends(get_current_user)):
     reservation_service = ReservationService(session)
@@ -31,7 +32,6 @@ def get_reservations(
     user: Union[Administrator, Employee] = Depends(get_current_user),
 ):
     role_service = ReservationService(session)
-    print(user)
     if not isinstance(user, Administrator) and not isinstance(user, Employee):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -47,3 +47,18 @@ def register_reservation(reservation: ReservationCreate,
     reservation_service = ReservationService(session)
     
     return reservation_service.register_reservation( user.id_customer, reservation)
+
+@reservation_router.put('/{id}', response_model=AssignmentBase, tags=["Reservation"])
+def update_reservation_assignment(id:str, 
+                                  reservation: AssignmentUpdate = Depends(),
+                                  session: Session = Depends(get_db_session),
+                                  _: Employee = Depends(get_current_user)):
+    reservation_service = ReservationService(session)
+    get_assignment = reservation_service.get_reservation_assignment(id)
+    if not get_assignment:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"Reservation Assignment {id} not found. "
+        )
+    reservation_service.update_reservation_assignment(id, reservation, get_assignment)
+
+    return get_assignment

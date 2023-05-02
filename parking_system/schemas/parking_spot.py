@@ -2,14 +2,15 @@ from typing import List
 
 from pydantic import BaseModel
 from .hourly_rate import HourlyRate
-from .business_hours import BussinesHours 
+from .business_hours import BussinesHours
+# from .assignment_rate import AssignmentBase
 
 
 class ParkingBase(BaseModel):
     name: str
-    status: bool
     section: str
     coordinate: str
+    type: str
     
     class Config:
         orm_mode = True
@@ -22,16 +23,16 @@ class Parking(ParkingBase):
         orm_mode = True
 
 class ParkingRegister(Parking):
-    price: str
     id_hours: str
 
     class Config:
         orm_mode = True
         
 
-class ShowParking(Parking):
-    hourly_rate: HourlyRate
+class ShowParking(ParkingBase):
+
     business_hours: BussinesHours
+    # assignment_rate: AssignmentBase
 
     class Config:
         orm_mode = True
