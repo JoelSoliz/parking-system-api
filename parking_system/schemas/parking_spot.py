@@ -3,7 +3,6 @@ from typing import List
 from pydantic import BaseModel
 from .hourly_rate import HourlyRate
 from .business_hours import BussinesHours
-# from .assignment_rate import AssignmentBase
 
 
 class ParkingBase(BaseModel):

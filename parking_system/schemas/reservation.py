@@ -37,7 +37,6 @@ class ReservationCreate(BaseModel):
 
     class Config:
         orm_mode = True
-    
 
 class ReservationPaginated(BaseModel):
     results: list[Reservation]
