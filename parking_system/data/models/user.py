@@ -14,7 +14,7 @@ class User(Base):
     password = Column(String(60), nullable=False)
     phone = Column(String(8), nullable=False)
     role = Column(String(4), ForeignKey('role.id_role'))
-    user_type = Column(String(4), nullable=False)
+    user_type = Column(String(10), nullable=False)
 
     role_info = relationship('Role', back_populates='users')
     user_permissions = relationship(

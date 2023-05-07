@@ -6,8 +6,8 @@ from .parking_spot import ParkingBase
 
 class Reservation(BaseModel):
     id_reservation: str
-    start_date: datetime
-    end_date: datetime
+    start_date: date
+    end_date: date
     id_customer: str
     create_at: datetime
     customer: Customer

@@ -1,8 +1,8 @@
-"""table weekday 3
+"""modify table user: user_type
 
-Revision ID: ee81742cfc48
-Revises: 43da80110092
-Create Date: 2023-04-18 17:15:06.075975
+Revision ID: 6b691bc02a6e
+Revises: 865e81272210
+Create Date: 2023-05-07 09:50:38.984345
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'ee81742cfc48'
-down_revision = '43da80110092'
+revision = '6b691bc02a6e'
+down_revision = '865e81272210'
 branch_labels = None
 depends_on = None
 
