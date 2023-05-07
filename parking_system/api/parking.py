@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from api.dependencies import get_db_session, get_current_user
-from schemas.parking_spot import ParkingBase, ShowParking, ParkingRegister, Parking
+from schemas.parking_spot import ParkingBase, ShowParking, ParkingRegister
 from schemas.business_hours import BussinesUpdate, BussinesHours
+from schemas.assignment_rate import AssignmentBase
 from services.parking_service import ParkingService
 from services.employee import EmployeeService
 from services.administrator import AdministratorService
@@ -14,22 +15,19 @@ from data.models.administrator import Administrator
 parking_router = APIRouter(prefix="/parking")
 
 
-@parking_router.get("/{id}", response_model=ShowParking, tags=["Parking"])
+@parking_router.get("/{id}", response_model=AssignmentBase, tags=["Parking"])
 def get_parking_spot(
     id: str,
     session: Session = Depends(get_db_session),
-    employee: Employee = Depends(get_current_user),
 ):
     parking_service = ParkingService(session)
-    employee_service = EmployeeService(session)
-    db_employee = employee_service.get_employee_by_email(employee.email)
-    if isinstance(db_employee, bool) or not db_employee:
+    db_parking_spot = parking_service.get_parking_and_price(id)
+    if not db_parking_spot:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You don't have permission to list parking spot.",
+            status_code=status.HTTP_404_NOT_FOUND, detail="Parking spot not found"
         )
 
-    return parking_service.get_parking_spot(id)
+    return db_parking_spot
 
 
 @parking_router.get("/", response_model=list[ShowParking], tags=["Parking"])
