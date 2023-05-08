@@ -21,8 +21,13 @@ def get_reservation(id: str, session: Session = Depends(get_db_session),
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You don't have permission to see reservation.",
         )
+    db_reservation = reservation_service.get_reservation(id)
+    if not db_reservation:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Reservation not found"
+        )
     
-    return reservation_service.get_reservation(id)
+    return db_reservation
 
 
 @reservation_router.get("/", response_model=ReservationPaginated, tags=["Reservation"])
