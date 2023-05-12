@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from api.dependencies import get_db_session, get_current_user
 from data.models import Administrator, Employee, Customer
-from schemas.reservation import ReservationPaginated, Reservation, ReservationCreate, ShowReservation
+from schemas.reservation import ReservationPaginated, Reservation, ReservationCreate
 from schemas.assignment_reservation import ReservationAndParkingSpot, AssignmentBase, AssignmentUpdate
 from services.reservation import ReservationService
 

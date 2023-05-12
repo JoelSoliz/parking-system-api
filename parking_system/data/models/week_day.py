@@ -12,3 +12,8 @@ class WeekDay(Base):
     id_reservation = Column(String(4), ForeignKey("reservation.id_reservation"))
     start_time = Column(Time(), nullable=False)
     end_time = Column(Time(), nullable=False)
+
+    reservation = relationship("Reservation", back_populates="weekdays")
+    
+    def __repr__(self):
+        return f"WeekDay(id_day={self.id_day}, day={self.day}, id_reservation={self.id_reservation}, start_time={self.start_time}, end_time={self.end_time})"

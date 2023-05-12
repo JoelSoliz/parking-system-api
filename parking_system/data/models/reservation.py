@@ -16,3 +16,7 @@ class Reservation(Base):
 
     customer = relationship("Customer", back_populates="reservations")
     reservation_assignment = relationship("ReservationAssignment", back_populates="reservations")
+    weekdays = relationship("WeekDay", back_populates="reservation")
+
+    def __repr__(self):
+        return f"<Reservation(id_reservation='{self.id_reservation}', start_date='{self.start_date}', end_date='{self.end_date}')>"

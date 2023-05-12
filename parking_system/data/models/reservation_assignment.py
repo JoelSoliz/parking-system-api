@@ -15,4 +15,7 @@ class ReservationAssignment(Base):
 
     parking_spots = relationship("ParkingSpot", back_populates="reservation_assignment")
     reservations = relationship("Reservation", back_populates="reservation_assignment")
+
+    def __repr__(self):
+        return f"<ReservationAssignment(id_assignment='{self.id_assignment}', status='{self.status}', date_created='{self.date_created}', id_spot='{self.id_spot}', id_reservation='{self.id_reservation}', id_assignment_rate='{self.id_assignment_rate}')>"
     
