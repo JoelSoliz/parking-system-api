@@ -2,13 +2,14 @@ from datetime import date
 import math
 from sqlalchemy import desc, func
 from sqlalchemy.orm import Session, joinedload
+from fastapi import HTTPException, status
 
 from schemas.reservation import ReservationCreate
 from schemas.assignment_reservation import AssignmentUpdate, ReservationWithParkingAndAssignment as Assignment
 from data.models.reservation import Reservation
 from data.models.reservation_assignment import ReservationAssignment
 from data.models.week_day import WeekDay
-from data.models.reservation_assignment import ReservationAssignment
+from data.models.parking_spot import ParkingSpot
 from .utils import generate_id
 
 
@@ -17,15 +18,29 @@ class ReservationService:
         self.session = session
 
     def get_reservation(self, id_assignment: str):
-        reservation = (self.session.query(ReservationAssignment)
-                    .options(
-                        joinedload(ReservationAssignment.parking_spots),
-                        joinedload(ReservationAssignment.reservations)
-                    )
-                    .filter(ReservationAssignment.id_assignment == id_assignment)
+        reservation = (self.session.query(
+                ReservationAssignment
+            )
+            .options(
+                joinedload(ReservationAssignment.parking_spots),
+                joinedload(ReservationAssignment.reservations)
+            )
+            .filter(ReservationAssignment.id_assignment == id_assignment).first()
         )
+        if not reservation:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Reservation not found"
+            )
 
-        return reservation.first()
+        days = (self.session.query(WeekDay).filter(WeekDay.id_reservation==reservation.id_reservation)).all()
+
+        data = {
+            "reservations": reservation.reservations,
+            "parkings_spots": reservation.parking_spots,
+            "days": [day.__dict__ for day in days]
+        }
+
+        return data
 
     def get_reservations(self, current_page, page_count=10):
         result_query = self.session.query(Reservation).filter(Reservation.start_date >= date.today())

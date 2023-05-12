@@ -14,23 +14,13 @@ class Reservation(BaseModel):
 
     class Config:
         orm_mode = True
-
-
-class ShowReservation(Reservation):
-    parking_spots: ParkingBase
-    reservations: Reservation
-
-    class Config:
-        orm_mode = True
     
 
 class ReservationCreate(BaseModel):
     start_date: date
     end_date: date
-
-    id_spot: str #nuevo
-    id_assignment_rate: str #nuevo
-    
+    id_spot: str 
+    id_assignment_rate: str
     day : list[str]
     start_time: list[time]
     end_time: list[time]
