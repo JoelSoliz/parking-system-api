@@ -1,6 +1,6 @@
-from datetime import date
+from datetime import date, datetime
 import math
-from sqlalchemy import desc, func, and_, distinct
+from sqlalchemy import desc, func, and_, or_
 from sqlalchemy.orm import Session, joinedload
 from fastapi import HTTPException, status
 
@@ -27,7 +27,7 @@ class ReservationService:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Reservation not found"
             )
-        
+
         data = {
             "reservations": reservation,
             "parkings_spots": reservation.reservation_assignment[0].parking_spots,
@@ -36,13 +36,16 @@ class ReservationService:
 
         return data
 
-    def get_reservation_date(self, id_spot: str, star_date: date, end_date):
+    def get_reservation_date(self, id_spot: str, start_date: date, end_date: date):
         reservations = self.session.query(Reservation).join(ReservationAssignment).filter(
-            (Reservation.start_date>= date) & (ReservationAssignment.status == 'Occupied') & (
-            ReservationAssignment.id_spot == id_spot)).options(joinedload(Reservation.weekdays)).all()    
+            and_(or_(and_(start_date >= Reservation.start_date, start_date <= Reservation.end_date), and_(end_date >= Reservation.start_date, end_date <= Reservation.end_date)),
+                 ReservationAssignment.status == 'Occupied',
+                 ReservationAssignment.id_spot == id_spot)).options(joinedload(Reservation.weekdays)).all()
+
         b = {}
-        for reservation in reservations:           
-            b.update({f"{wd.day}-{str(wd.start_time)}-{str(wd.end_time)}":wd.__dict__ for wd in reservation.weekdays})
+        for reservation in reservations:
+            b.update(
+                {f"{wd.day}-{str(wd.start_time)}-{str(wd.end_time)}": wd.__dict__ for wd in reservation.weekdays})
         data = {
             "week_days": list(b.values())
         }
@@ -124,6 +127,7 @@ class ReservationService:
 
     def get_reservation_assignment(self, id: str):
         return self.session.query(ReservationAssignment).filter(ReservationAssignment.id_assignment == id).first()
+# aceptar
 
     def update_reservation_assignment(self, id: str, reservation: AssignmentUpdate, get_assignment):
         self.session.query(ReservationAssignment).filter(

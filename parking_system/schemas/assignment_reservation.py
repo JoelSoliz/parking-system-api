@@ -57,7 +57,7 @@ class ReservationAndParkingSpot(BaseModel):
     class Config:
         orm_mode = True
 
-class ReservationAndParkingSpot1(BaseModel):
+class DaysAndDate(BaseModel):
     week_days: list[Days]
     
     class Config:
