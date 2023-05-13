@@ -1,3 +1,4 @@
+from typing import Optional
 from datetime import date, datetime, time
 
 from pydantic import BaseModel
@@ -26,9 +27,9 @@ class ReservationBase(BaseModel):
 
 
 class Days(BaseModel):
-    day: str
-    start_time: time
-    end_time: time
+    day: Optional[str] = None
+    start_time: Optional[time] = None
+    end_time: Optional[time] = None
 
     class Config:
         orm_mode = True
@@ -53,5 +54,11 @@ class ReservationAndParkingSpot(BaseModel):
     parkings_spots: ParkingBase
     days: list[Days]
 
+    class Config:
+        orm_mode = True
+
+class ReservationAndParkingSpot1(BaseModel):
+    week_days: list[Days]
+    
     class Config:
         orm_mode = True

@@ -23,9 +23,6 @@ class ParkingService:
 
         return parking_spot
     
-    
-
-    # def get_
 
     def get_parking_spots(self):
         result_query = self.session.query(ParkingSpot).all()

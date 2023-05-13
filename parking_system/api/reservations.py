@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Union
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -5,7 +6,7 @@ from sqlalchemy.orm import Session
 from api.dependencies import get_db_session, get_current_user
 from data.models import Administrator, Employee, Customer
 from schemas.reservation import ReservationPaginated, Reservation, ReservationCreate
-from schemas.assignment_reservation import ReservationAndParkingSpot, AssignmentBase, AssignmentUpdate
+from schemas.assignment_reservation import ReservationAndParkingSpot, AssignmentBase, AssignmentUpdate, ReservationAndParkingSpot1
 from services.reservation import ReservationService
 
 
@@ -25,6 +26,13 @@ def get_reservation(id: str, session: Session = Depends(get_db_session),
     
     return db_reservation
 
+@reservation_router.get("/date/we", response_model=ReservationAndParkingSpot1, tags=["Reservation"])
+def get_reservation_date(id:str, date: date, session: Session = Depends(get_db_session),
+                         user: Customer= Depends(get_current_user)):
+    reservation_service = ReservationService(session)
+    resultado = reservation_service.get_reservation_date(id, date)
+
+    return resultado
 
 @reservation_router.get("/", response_model=ReservationPaginated, tags=["Reservation"])
 def get_reservations(
