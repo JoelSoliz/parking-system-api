@@ -30,6 +30,7 @@ class ReservationCreate(BaseModel):
 
 class ReservationPaginated(BaseModel):
     results: list[Reservation]
+    id_spot: list[str]
     current_page: int
     total_pages: int
     total_elements: int

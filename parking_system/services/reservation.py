@@ -57,17 +57,19 @@ class ReservationService:
         result_query = self.session.query(Reservation).filter(
             Reservation.start_date >= date.today())
         results = (
-            result_query.options(joinedload(Reservation.customer))
+            result_query.options(joinedload(Reservation.customer), 
+                                 joinedload(Reservation.reservation_assignment))
             .order_by(desc(func.timediff(Reservation.end_date, Reservation.start_date)))
             .offset((current_page - 1) * page_count)
             .limit(page_count)
             .all()
         )
         count_data = result_query.count()
-
+        
         if count_data:
             data = {
                 "results": [employee.__dict__ for employee in results],
+                "id_spot": [spot.id_spot for result in results for spot in result.reservation_assignment],
                 "current_page": current_page,
                 "total_pages": math.ceil(count_data / page_count),
                 "total_elements": count_data,
