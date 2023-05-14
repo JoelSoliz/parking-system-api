@@ -47,6 +47,7 @@ class ReservationService:
         for reservation in reservations:
             b.update(
                 {f"{wd.day}-{str(wd.start_time)}-{str(wd.end_time)}": wd.__dict__ for wd in reservation.weekdays})
+        print(b)
         data = {
             "week_days": list(b.values())
         }
@@ -65,7 +66,7 @@ class ReservationService:
             .all()
         )
         count_data = result_query.count()
-        
+
         if count_data:
             data = {
                 "results": [employee.__dict__ for employee in results],

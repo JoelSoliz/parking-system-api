@@ -12,17 +12,18 @@ class ParkingService:
     def __init__(self, session: Session):
         self.session = session
 
-    def get_parking_and_price(self, id_rate: str):
-        parking_spot = (self.session.query(AssignmentRate)
-                        .options(
-            joinedload(AssignmentRate.parking_spot),
-            joinedload(AssignmentRate.price)
-        )
-            .filter(AssignmentRate.id_assignment_rate == id_rate).first()
-        )
 
-        return parking_spot
-    
+    def get_parking_and_price(self, id_spot: str):
+        parking_spot = self.session.query(ParkingSpot).options(
+            joinedload(ParkingSpot.assignment_rate)
+        ).filter(ParkingSpot.id_spot == id_spot).first()
+        parking_with_price = {
+            "parking_spot": parking_spot,
+            "prices": parking_spot.assignment_rate[0].price
+        }
+
+        return parking_with_price
+
 
     def get_parking_spots(self):
         result_query = self.session.query(ParkingSpot).all()
