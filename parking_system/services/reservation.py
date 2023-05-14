@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session, joinedload
 from fastapi import HTTPException, status
 
 from schemas.reservation import ReservationCreate
-from schemas.assignment_reservation import AssignmentUpdate, ReservationWithParkingAndAssignment as Assignment
+from schemas.assignment_reservation import AssignmentUpdate, ReservationWithParkingAndAssignment, AssignmentBase
 from data.models.reservation import Reservation
 from data.models.reservation_assignment import ReservationAssignment
 from data.models.week_day import WeekDay
@@ -31,6 +31,7 @@ class ReservationService:
         data = {
             "reservations": reservation,
             "parkings_spots": reservation.reservation_assignment[0].parking_spots,
+            "status": reservation.reservation_assignment[0].status,
             "days": reservation.weekdays
         }
 
@@ -125,15 +126,43 @@ class ReservationService:
 
         return db_assignment
 
-    def get_reservation_assignment(self, id: str):
-        return self.session.query(ReservationAssignment).filter(ReservationAssignment.id_assignment == id).first()
-# aceptar
+    def get_reservation_assignment(self, id_reservation: str):
+        assignment = self.session.query(Reservation).join(ReservationAssignment).filter(
+            ReservationAssignment.id_reservation == id_reservation).first()
+        
+       
+        return assignment.reservation_assignment[0]
+
 
     def update_reservation_assignment(self, id: str, reservation: AssignmentUpdate, get_assignment):
         self.session.query(ReservationAssignment).filter(
             ReservationAssignment.id_assignment == id).update({'status': reservation.status,
                                                                'id_spot': reservation.id_spot,
                                                                'id_assignment_rate': reservation.id_assignment_rate})
+        self.session.commit()
+        self.session.refresh(get_assignment)
+
+        return get_assignment
+    
+    def reservation_id_accepted(self, id_reservation, get_assignment):
+        self.session.query(ReservationAssignment).filter(
+            ReservationAssignment.id_reservation==id_reservation
+        ).update({
+            ReservationAssignment.status:'Occupied'
+            }
+        )
+        self.session.commit()
+        self.session.refresh(get_assignment)
+
+        return get_assignment
+    
+    def reservation_id_rejected(self, id_reservation, get_assignment):
+        self.session.query(ReservationAssignment).filter(
+            ReservationAssignment.id_reservation==id_reservation
+        ).update({
+            ReservationAssignment.status:'Available'
+            }
+        )
         self.session.commit()
         self.session.refresh(get_assignment)
 
