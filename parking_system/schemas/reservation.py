@@ -19,8 +19,8 @@ class Reservation(BaseModel):
 class ReservationCreate(BaseModel):
     start_date: date
     end_date: date
+    id_price: str
     id_spot: str 
-    id_assignment_rate: str
     day : list[str]
     start_time: list[time]
     end_time: list[time]
@@ -28,9 +28,26 @@ class ReservationCreate(BaseModel):
     class Config:
         orm_mode = True
 
+class ReservationWithCustomer(BaseModel):
+    id_reservation: str
+    start_date: date
+    end_date: date
+    create_at: datetime
+    customer:Customer
+    
+    class Config:
+        orm_mode = True
+
+class ReservationWithIdCustomer(BaseModel):
+    reservation: ReservationWithCustomer
+    id_spot: str
+
+    class Config:
+        orm_mode = True
+
+
 class ReservationPaginated(BaseModel):
-    results: list[Reservation]
-    id_spot: list[str]
+    results: list[ReservationWithIdCustomer]
     current_page: int
     total_pages: int
     total_elements: int

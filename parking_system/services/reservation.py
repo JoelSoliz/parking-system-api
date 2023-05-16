@@ -55,22 +55,25 @@ class ReservationService:
         return data
 
     def get_reservations(self, current_page, page_count=10):
-        result_query = self.session.query(Reservation).filter(
+        result_query = self.session.query(Reservation, ReservationAssignment.id_spot).join(ReservationAssignment).filter(
             Reservation.start_date >= date.today())
         results = (
-            result_query.options(joinedload(Reservation.customer), 
-                                 joinedload(Reservation.reservation_assignment))
+            result_query.options(joinedload(Reservation.customer),joinedload(Reservation.reservation_assignment))
             .order_by(desc(func.timediff(Reservation.end_date, Reservation.start_date)))
             .offset((current_page - 1) * page_count)
             .limit(page_count)
             .all()
         )
         count_data = result_query.count()
-
+        b= [{"reservation": {"id_reservation": resultado[0].id_reservation, 
+                             "start_date": resultado[0].start_date, 
+                             "end_date": resultado[0].end_date, 
+                             "customer":resultado[0].customer, 
+                             "create_at":resultado[0].create_at}, 
+                             "id_spot": resultado[1]} for resultado in results]
         if count_data:
             data = {
-                "results": [employee.__dict__ for employee in results],
-                "id_spot": [spot.id_spot for result in results for spot in result.reservation_assignment],
+                "results": b,
                 "current_page": current_page,
                 "total_pages": math.ceil(count_data / page_count),
                 "total_elements": count_data,
@@ -90,7 +93,7 @@ class ReservationService:
     def register_reservation(self, id_customer: str, reservation: ReservationCreate):
         id_reservation = generate_id()
         db_reservation = Reservation(id_reservation=id_reservation,
-                                     id_customer=id_customer,
+                                     id_customer=id_customer, id_price = reservation.id_price,
                                      start_date=reservation.start_date,
                                      end_date=reservation.end_date,
                                      )
@@ -99,8 +102,8 @@ class ReservationService:
         self.register_days(id_reservation, reservation.start_time,
                            reservation.end_time, reservation.day)
         self.register_assignment_reservation(reservation.id_spot,
-                                             id_reservation,
-                                             reservation.id_assignment_rate)
+                                             id_reservation
+                                             )
 
         self.session.commit()
         self.session.refresh(db_reservation)
@@ -119,11 +122,10 @@ class ReservationService:
             )
             self.session.add(db_day)
 
-    def register_assignment_reservation(self, id_spot, id_reservation: str, id_assignment: str):
+    def register_assignment_reservation(self, id_spot, id_reservation: str):
         id = generate_id()
         db_assignment = ReservationAssignment(id_assignment=id, status='Reserved',
-                                              id_spot=id_spot, id_reservation=id_reservation,
-                                              id_assignment_rate=id_assignment)
+                                              id_spot=id_spot, id_reservation=id_reservation)
 
         self.session.add(db_assignment)
 
@@ -139,7 +141,7 @@ class ReservationService:
 
     def update_reservation_assignment(self, id: str, reservation: AssignmentUpdate, get_assignment):
         self.session.query(ReservationAssignment).filter(
-            ReservationAssignment.id_assignment == id).update({'status': reservation.status,
+            ReservationAssignment.id_reservation == id).update({'status': reservation.status,
                                                                'id_spot': reservation.id_spot,
                                                                'id_assignment_rate': reservation.id_assignment_rate})
         self.session.commit()

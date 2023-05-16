@@ -13,6 +13,7 @@ class Customer(User):
     created_at = Column(DateTime(), default=datetime.now())
 
     reservations = relationship("Reservation", back_populates="customer")
+    # pays = relationship("Pay", back_populates="customer")
 
     __mapper_args__ = {
         "polymorphic_identity": "customer",
