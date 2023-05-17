@@ -12,10 +12,19 @@ class PayBase(BaseModel):
 
 class PayDateTime(PayBase):
     payment_datetime = datetime
+    
+    class Config:
+        orm_mode = True
 
 class Pay(PayDateTime):
     id_pay: str
 
+    class Config:
+        orm_mode = True
+
+class PayAndReservation(PayBase):
+    reservation: str
+    
     class Config:
         orm_mode = True
 
