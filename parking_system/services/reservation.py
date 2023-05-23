@@ -139,6 +139,16 @@ class ReservationService:
         return assignment.reservation_assignment[0]
 
 
+    # def update_reservation_assignment(self, id: str, reservation: AssignmentUpdate, get_assignment):
+    #     self.session.query(ReservationAssignment).filter(
+    #         ReservationAssignment.id_reservation == id).update({'status': reservation.status,
+    #                                                            'id_spot': reservation.id_spot,
+    #                                                            'id_assignment_rate': reservation.id_assignment_rate})
+    #     self.session.commit()
+    #     self.session.refresh(get_assignment)
+
+    #     return get_assignment
+    
     def update_reservation_assignment(self, id: str, reservation: AssignmentUpdate, get_assignment):
         self.session.query(ReservationAssignment).filter(
             ReservationAssignment.id_reservation == id).update({'status': reservation.status,
@@ -148,7 +158,7 @@ class ReservationService:
         self.session.refresh(get_assignment)
 
         return get_assignment
-    
+
     def reservation_id_accepted(self, id_reservation, get_assignment):
         self.session.query(ReservationAssignment).filter(
             ReservationAssignment.id_reservation==id_reservation

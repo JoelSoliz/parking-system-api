@@ -11,7 +11,7 @@ class PayBase(BaseModel):
         orm_mode = True
 
 class PayDateTime(PayBase):
-    payment_datetime = datetime
+    payment_datetime: datetime
     
     class Config:
         orm_mode = True
@@ -31,4 +31,13 @@ class PayAndReservation(PayBase):
 class PayWithCustomer(BaseModel):
     customer: Customer
     pay: Pay
+    id_spot: str
 
+    class Config:
+        orm_mode = True
+
+class Result(BaseModel):
+    results: list[PayWithCustomer]
+
+    class Config:
+        orm_mode = True

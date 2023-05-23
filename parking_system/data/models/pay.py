@@ -13,3 +13,6 @@ class Pay(Base):
     reservation = Column(String(4), ForeignKey('reservation.id_reservation'))
 
     reservations = relationship("Reservation", back_populates="pays")
+
+    def __repr__(self):
+        return f"<Pay(id_pay='{self.id_pay}', payment_datetime='{self.payment_datetime}', reservation='{self.reservation}')>"

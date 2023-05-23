@@ -1,7 +1,7 @@
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm import Session
 from schemas.parking_spot import ParkingRegister
-from schemas.business_hours import BussinesUpdate, BussinesHours
+from schemas.business_hours import BussinesUpdate, BussinesHours, BussinesUpdateA
 from data.models.business_hours import BusinessHours
 from data.models.assignment_rate import AssignmentRate
 from data.models.parking_spot import ParkingSpot
@@ -53,22 +53,22 @@ class ParkingService:
 
         return db_business_hour
 
+    def get_hours(self):
+        db_get_hour = self.session.query(BusinessHours).all()
+        
+        return db_get_hour
 
     def get_hour(self, id_hour: str):
         db_get_hour = self.session.query(BusinessHours).filter(
             BusinessHours.id_hour == id_hour).first()
         
         return db_get_hour
-    
-    def get_hour_and_parking():
 
-        pass
 
-    def update_hour(self, id: str, hour: BussinesUpdate, get_hour):
+    def update_hour(self, id: str, hour: BussinesUpdateA, get_hour):
         self.session.query(BusinessHours).filter(
             BusinessHours.id_hour == id).update({'openning_time': hour.openning_time,
-                                                'clousing_time': hour.clousing_time, 
-                                                'days': hour.days})
+                                                'clousing_time': hour.clousing_time})
         self.session.commit()
         self.session.refresh(get_hour)
 

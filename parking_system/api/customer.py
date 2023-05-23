@@ -10,7 +10,7 @@ from data.models.administrator import Administrator as Admin
 
 
 customer_router = APIRouter(prefix="/customer")
-
+    
 
 @customer_router.get("/me", response_model=Customer, tags=["Customer"])
 def get_me(customer: Customer = Depends(get_current_user)):

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from api.dependencies import get_db_session, get_current_user
 from schemas.parking_spot import ParkingBase, ShowParking, ParkingRegister
-from schemas.business_hours import BussinesUpdate, BussinesHours
+from schemas.business_hours import BussinesUpdate, BussinesHours, BussinesUpdateA
 from schemas.assignment_rate import AssignmentBase
 from services.parking_service import ParkingService
 from services.employee import EmployeeService
@@ -36,11 +36,16 @@ def get_parking_spots(session: Session = Depends(get_db_session)):
 
     return parking_spot.get_parking_spots()
 
+@parking_router.get("/hours/", response_model=list[BussinesUpdate], tags=["Parking"])
+def get_bussines_hours(session: Session = Depends(get_db_session)):
+    db_bussiness_hour = ParkingService(session)
+    return db_bussiness_hour.get_hours()
+
 
 @parking_router.put("/{id}", response_model=BussinesHours, tags=["Parking"])
 def update_hour_parking(
     id: str,
-    hour: BussinesUpdate = Depends(),
+    hour: BussinesUpdateA = Depends(),
     session: Session = Depends(get_db_session),
     _: Administrator = Depends(get_current_user),
 ):
@@ -75,7 +80,7 @@ def register_parking(
 
 @parking_router.post("/register-hour", response_model=BussinesHours, tags=["Parking"])
 def register_business_hour(
-    business: BussinesHours,
+    business: BussinesUpdate,
     session: Session = Depends(get_db_session),
     administrator: Administrator = Depends(get_current_user),
 ):

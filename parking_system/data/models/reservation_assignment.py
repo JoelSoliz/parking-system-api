@@ -11,7 +11,7 @@ class ReservationAssignment(Base):
     date_created = Column(DateTime(), default=datetime.now())
     id_spot = Column(String(4), ForeignKey('parking_spot.id_spot'))
     id_reservation = Column(String(4), ForeignKey('reservation.id_reservation'))
-    id_assignment_rate = Column(String(4), ForeignKey('assignment_rate.id_assignment_rate'))
+    # id_assignment_rate = Column(String(4), ForeignKey('assignment_rate.id_assignment_rate'))
 
     parking_spots = relationship("ParkingSpot", back_populates="reservation_assignment")
     reservations = relationship("Reservation", back_populates="reservation_assignment")

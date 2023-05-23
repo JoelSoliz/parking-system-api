@@ -18,3 +18,6 @@ class Customer(User):
     __mapper_args__ = {
         "polymorphic_identity": "customer",
     }
+
+    def __repr__(self):
+        return f"Customer(id_customer='{self.id_customer}', id_user='{self.id_user}', notification_type='{self.notification_type}')"
