@@ -1,7 +1,8 @@
+from typing import Optional
 from datetime import date, datetime, time
 
 from pydantic import BaseModel
-from .parking_spot import ParkingBase
+from .parking_spot import Parking
 from .reservation import Reservation as Reserva
 from .customer import Customer
 
@@ -26,9 +27,9 @@ class ReservationBase(BaseModel):
 
 
 class Days(BaseModel):
-    day: str
-    start_time: time
-    end_time: time
+    day: Optional[str] = None
+    start_time: Optional[time] = None
+    end_time: Optional[time] = None
 
     class Config:
         orm_mode = True
@@ -50,8 +51,15 @@ class AssignmentUpdate(AssignmentBase):
 
 class ReservationAndParkingSpot(BaseModel):
     reservations: Reserva
-    parkings_spots: ParkingBase
+    parkings_spots: Parking
+    status: str
     days: list[Days]
 
+    class Config:
+        orm_mode = True
+
+class DaysAndDate(BaseModel):
+    week_days: list[Days]
+    
     class Config:
         orm_mode = True

@@ -11,3 +11,6 @@ class AssignmentRate(Base):
 
     parking_spot = relationship('ParkingSpot', back_populates='assignment_rate')
     price = relationship('HourlyRate', back_populates='assignment_rate')
+
+    def __repr__(self):
+        return f'<AssignmentRate(id_assignment_rate={self.id_assignment_rate}, id_spot={self.id_spot}, id_price={self.id_price})>'
