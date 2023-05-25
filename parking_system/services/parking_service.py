@@ -1,10 +1,12 @@
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm import Session
-from schemas.parking_spot import ParkingRegister
-from schemas.business_hours import BussinesUpdate, BussinesHours, BussinesUpdateA
+from schemas.parking_spot import Parking
+from schemas.business_hours import BussinesHours, BussinesUpdateA
 from data.models.business_hours import BusinessHours
 from data.models.assignment_rate import AssignmentRate
 from data.models.parking_spot import ParkingSpot
+from data.models.hourly_rate import HourlyRate
+
 from .utils import generate_id
 
 
@@ -30,11 +32,12 @@ class ParkingService:
         
         return result_query
 
-    def register_parking_spot(self, parking: ParkingRegister):
-        id_parking = generate_id()
-        db_parking_spot = ParkingSpot(id_spot=id_parking, name=parking.name,
+    def register_parking_spot(self, parking: Parking):
+        id_spot = generate_id()
+        db_parking_spot = ParkingSpot(id_spot=id_spot, name=parking.name,
                                       section=parking.section, type=parking.type, 
                                       coordinate=parking.coordinate)
+        self.register_assignment_rate(id_spot, parking.type)
 
         self.session.add(db_parking_spot)
         self.session.commit()
@@ -42,6 +45,20 @@ class ParkingService:
 
         return db_parking_spot
     
+    def register_assignment_rate(self, id_spot, type:str):
+        id_assignment_rate = generate_id()
+        query = AssignmentRate(id_assignment_rate = id_assignment_rate, 
+                               id_spot = id_spot, id_price = self.get_hourly_rate(type)
+                               )
+        self.session.add(query)
+
+    def get_hourly_rate(self, type:str):
+        query_hourly_rate = self.session.query(HourlyRate.id_price).filter(
+            HourlyRate.type==type
+        ).first()
+
+        return query_hourly_rate.id_price
+
     def register_business_hour(self, business_hours: BussinesHours):
         id_hour = generate_id()
         db_business_hour = BusinessHours(id_hour = id_hour, openning_time = business_hours.openning_time,

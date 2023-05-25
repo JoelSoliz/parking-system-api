@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from api.dependencies import get_db_session, get_current_user
-from schemas.parking_spot import ParkingBase, ShowParking, ParkingRegister
+from schemas.parking_spot import ParkingBase, ShowParking, Parking
 from schemas.business_hours import BussinesUpdate, BussinesHours, BussinesUpdateA
 from schemas.assignment_rate import AssignmentBase
 from schemas.hourly_rate import SpotAndType
@@ -67,7 +67,7 @@ def update_hour_parking(
 
 @parking_router.post("/", response_model=ParkingBase, tags=["Parking"])
 def register_parking(
-    parking: ParkingRegister,
+    parking: Parking,
     session: Session = Depends(get_db_session),
     administrator: Administrator = Depends(get_current_user),
 ):

@@ -58,27 +58,27 @@ def register_reservation(reservation: ReservationCreate,
 
 @reservation_router.put('/{id}', response_model=AssignmentBase, tags=["Reservation"])
 def reservation_accepted(id:str, session: Session = Depends(get_db_session),
-                         _: Employee = Depends(get_current_user)):
+                         user: Employee = Depends(get_current_user)):
     reservation_service = ReservationService(session)
     get_assignment = reservation_service.get_reservation_assignment(id)
     if not get_assignment:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"Reservation Assignment {id} not found. "
         )
-    reservation_service.reservation_id_accepted(id, get_assignment)
+    reservation_service.reservation_id_accepted(id, user.id_employee, get_assignment)
 
     return get_assignment
 
 @reservation_router.put('/rejected/{id}', response_model=AssignmentBase, tags=["Reservation"])
 def reservation_rejected(id:str, session: Session = Depends(get_db_session),
-                         _: Employee = Depends(get_current_user)):
+                         user: Employee = Depends(get_current_user)):
     reservation_service = ReservationService(session)
     get_assignment = reservation_service.get_reservation_assignment(id)
     if not get_assignment:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"Reservation Assignment {id} not found. "
         )
-    reservation_service.reservation_id_rejected(id, get_assignment)
+    reservation_service.reservation_id_rejected(id, user.id_employee, get_assignment)
 
     return get_assignment
 

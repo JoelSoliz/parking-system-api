@@ -5,11 +5,10 @@ from sqlalchemy.orm import Session, joinedload
 from fastapi import HTTPException, status
 
 from schemas.reservation import ReservationCreate
-from schemas.assignment_reservation import AssignmentUpdate, ReservationWithParkingAndAssignment, AssignmentBase
+from schemas.assignment_reservation import AssignmentUpdate
 from data.models.reservation import Reservation
 from data.models.reservation_assignment import ReservationAssignment
 from data.models.week_day import WeekDay
-from data.models.parking_spot import ParkingSpot
 from .utils import generate_id
 
 
@@ -27,11 +26,11 @@ class ReservationService:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Reservation not found"
             )
-
         data = {
             "reservations": reservation,
             "parkings_spots": reservation.reservation_assignment[0].parking_spots,
             "status": reservation.reservation_assignment[0].status,
+            "assisted_by": reservation.reservation_assignment[0].assisted_by,
             "days": reservation.weekdays
         }
 
@@ -55,7 +54,7 @@ class ReservationService:
         return data
 
     def get_reservations(self, current_page, page_count=10):
-        result_query = self.session.query(Reservation, ReservationAssignment.id_spot).join(ReservationAssignment).filter(
+        result_query = self.session.query(Reservation, ReservationAssignment.id_spot, ReservationAssignment.status).join(ReservationAssignment).filter(
             Reservation.start_date >= date.today())
         results = (
             result_query.options(joinedload(Reservation.customer),joinedload(Reservation.reservation_assignment))
@@ -70,7 +69,7 @@ class ReservationService:
                              "end_date": resultado[0].end_date, 
                              "customer":resultado[0].customer, 
                              "create_at":resultado[0].create_at}, 
-                             "id_spot": resultado[1]} for resultado in results]
+                             "id_spot": resultado[1], "status": resultado[2]} for resultado in results]
         if count_data:
             data = {
                 "results": b,
@@ -159,11 +158,12 @@ class ReservationService:
 
         return get_assignment
 
-    def reservation_id_accepted(self, id_reservation, get_assignment):
+    def reservation_id_accepted(self, id_reservation, id_employee, get_assignment):
         self.session.query(ReservationAssignment).filter(
             ReservationAssignment.id_reservation==id_reservation
         ).update({
-            ReservationAssignment.status:'Occupied'
+            ReservationAssignment.status:'Occupied',
+            ReservationAssignment.assisted_by:id_employee
             }
         )
         self.session.commit()
@@ -171,11 +171,12 @@ class ReservationService:
 
         return get_assignment
     
-    def reservation_id_rejected(self, id_reservation, get_assignment):
+    def reservation_id_rejected(self, id_reservation, id_employee,get_assignment):
         self.session.query(ReservationAssignment).filter(
             ReservationAssignment.id_reservation==id_reservation
         ).update({
-            ReservationAssignment.status:'Available'
+            ReservationAssignment.status:'Available',
+            ReservationAssignment.assisted_by:id_employee
             }
         )
         self.session.commit()

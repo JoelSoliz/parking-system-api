@@ -53,6 +53,7 @@ class ReservationAndParkingSpot(BaseModel):
     reservations: Reserva
     parkings_spots: Parking
     status: str
+    assisted_by: Optional[str] = None
     days: list[Days]
 
     class Config:
