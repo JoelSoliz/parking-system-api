@@ -32,7 +32,7 @@ class ParkingService:
 
     def register_parking_spot(self, parking: ParkingRegister):
         id_parking = generate_id()
-        db_parking_spot = ParkingSpot(id_spot=id_parking,id_hour=parking.id_hours, name=parking.name,
+        db_parking_spot = ParkingSpot(id_spot=id_parking, name=parking.name,
                                       section=parking.section, type=parking.type, 
                                       coordinate=parking.coordinate)
 
@@ -73,3 +73,15 @@ class ParkingService:
         self.session.refresh(get_hour)
 
         return get_hour
+    
+    def get_spot_section(self, type: str):
+        type_query = self.session.query(ParkingSpot).options(
+            joinedload(ParkingSpot.assignment_rate)
+        ).filter(ParkingSpot.type==type).all()
+        print(type_query[0].assignment_rate[0].price)
+        
+        results = [{'spot':{'id_spot':type.id_spot, 'name': type.name, 
+                      'coordinate': type.coordinate, 
+                      'section': type.section, 'type': type.type},
+                      'hourly_rate': type.assignment_rate[0].price} for type in type_query]
+        return results

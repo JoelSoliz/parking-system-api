@@ -1,7 +1,7 @@
 from typing import List
 
 from pydantic import BaseModel
-from .hourly_rate import HourlyRate
+# from .hourly_rate import HourlyRate
 from .business_hours import BussinesHours
 
 
