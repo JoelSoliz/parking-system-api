@@ -40,7 +40,7 @@ class ParkingService:
         self.register_assignment_rate(id_spot, parking.type)
 
         self.session.add(db_parking_spot)
-        self.session.commit()
+        self.session.commit()   
         self.session.refresh(db_parking_spot)
 
         return db_parking_spot
