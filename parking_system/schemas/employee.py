@@ -31,3 +31,18 @@ class EmployeePaginated(BaseModel):
 
     class Config:
         orm_mode = True
+
+class UserEmployee(BaseModel):
+    name: str
+    last_name: str
+    ci: int
+    email: str
+    
+    class Config:
+        orm_mode = True
+
+class EmployeeID(UserEmployee):
+    id_employee: str
+
+    class Config: 
+        orm_mode = True

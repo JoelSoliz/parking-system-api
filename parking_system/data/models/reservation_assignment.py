@@ -8,6 +8,7 @@ class ReservationAssignment(Base):
     __tablename__ = 'reservation_assignment'
     id_assignment = Column(String(4), primary_key=True)
     status = Column(Enum('Reserved', 'Occupied', 'Available'), nullable=False)
+    assisted_by = Column(String(4), nullable=True)
     date_created = Column(DateTime(), default=datetime.now())
     id_spot = Column(String(4), ForeignKey('parking_spot.id_spot'))
     id_reservation = Column(String(4), ForeignKey('reservation.id_reservation'))

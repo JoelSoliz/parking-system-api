@@ -3,6 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from .parking_spot import ParkingBase
 
 class HourlyRateBase(BaseModel):
 
@@ -16,6 +17,11 @@ class HourlyRateBase(BaseModel):
     
     class Config:
         orm_mode = True
+
+class SpotAndType(BaseModel):
+    hourly_rate: HourlyRateBase
+    spot: ParkingBase
+
 
 class HourlyRate(HourlyRateBase):
     id_price: str

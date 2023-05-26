@@ -11,5 +11,3 @@ class BusinessHours(Base):
                            'Friday', 'Saturday', 'Sunday', name='day_of_week_enum'), nullable=False)
     openning_time = Column(Time(), nullable=False)
     clousing_time = Column(Time(), nullable=False)
-    
-    parking_spots = relationship("ParkingSpot", back_populates="business_hours")

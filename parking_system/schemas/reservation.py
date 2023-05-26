@@ -41,7 +41,8 @@ class ReservationWithCustomer(BaseModel):
 class ReservationWithIdCustomer(BaseModel):
     reservation: ReservationWithCustomer
     id_spot: str
-
+    status: str
+    
     class Config:
         orm_mode = True
 

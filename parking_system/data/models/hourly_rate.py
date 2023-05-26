@@ -12,6 +12,7 @@ class HourlyRate(Base):
     weekly_rate = Column(Float(precision=5), nullable=False)
     monthly_rate = Column(Float(precision=5), nullable=False)
     annual_rate = Column(Float(precision=5), nullable=False)
+    type = Column(Enum('Previlegiado', 'Regular', 'Común'), nullable=False)
     start_date = Column(Date, nullable=False)
     end_date = Column(Date, nullable=True)
     
