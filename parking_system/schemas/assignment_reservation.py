@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from .parking_spot import Parking
 from .reservation import Reservation as Reserva
 from .customer import Customer
+from .employee import EmployeeID
 
 class AssignmentBase(BaseModel):
     status: str
@@ -53,7 +54,7 @@ class ReservationAndParkingSpot(BaseModel):
     reservations: Reserva
     parkings_spots: Parking
     status: str
-    assisted_by: Optional[str] = None
+    employee: Optional[EmployeeID] = None
     days: list[Days]
 
     class Config:

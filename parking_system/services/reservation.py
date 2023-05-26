@@ -10,6 +10,7 @@ from data.models.reservation import Reservation
 from data.models.reservation_assignment import ReservationAssignment
 from data.models.week_day import WeekDay
 from .utils import generate_id
+from .employee import EmployeeService as employee
 
 
 class ReservationService:
@@ -21,16 +22,18 @@ class ReservationService:
             joinedload(Reservation.weekdays),
             joinedload(Reservation.reservation_assignment).joinedload(
                 ReservationAssignment.parking_spots),
+            joinedload(Reservation.customer)    
         ).filter(Reservation.id_reservation == id_reservation).first()
         if not reservation:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Reservation not found"
             )
         data = {
+            "customer": reservation.customer,
             "reservations": reservation,
             "parkings_spots": reservation.reservation_assignment[0].parking_spots,
             "status": reservation.reservation_assignment[0].status,
-            "assisted_by": reservation.reservation_assignment[0].assisted_by,
+            "employee": employee.get_employee(self, reservation.reservation_assignment[0].assisted_by),
             "days": reservation.weekdays
         }
 

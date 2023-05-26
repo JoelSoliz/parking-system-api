@@ -24,3 +24,6 @@ class User(Base):
         'polymorphic_identity': 'user',
         'polymorphic_on': user_type
     }
+
+    def __repr__(self):
+        return f"User(id_user='{self.id_user}', name='{self.name}', last_name='{self.last_name}', ci='{self.ci}', email='{self.email}', password='{self.password}', phone='{self.phone}', role='{self.role}', user_type='{self.user_type}')"
