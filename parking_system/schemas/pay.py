@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 from .customer import Customer
 from .parking_spot import Parking
+from .hourly_rate import HourlyRateBase
 
 class PayBase(BaseModel):
     amount: float
@@ -38,6 +39,20 @@ class PayWithCustomer(BaseModel):
 
 class Result(BaseModel):
     results: list[PayWithCustomer]
+
+    class Config:
+        orm_mode = True
+
+class LatePayment(BaseModel):
+    customer: Customer
+    spot: Parking
+    price: HourlyRateBase
+
+    class Config:
+        orm_mode = True
+
+class PaginatedLatePayment(BaseModel):
+    results: list[LatePayment]
 
     class Config:
         orm_mode = True

@@ -38,12 +38,13 @@ class ReservationService:
         }
 
         return data
-
-    def get_reservation_date(self, id_spot: str, start_date: date, end_date: date):
+    
+    def get_reservation_date(self, id_spot: str, id_reservation: str, start_date: date, end_date: date):
         reservations = self.session.query(Reservation).join(ReservationAssignment).filter(
             and_(or_(and_(start_date >= Reservation.start_date, start_date <= Reservation.end_date), and_(end_date >= Reservation.start_date, end_date <= Reservation.end_date)),
                  ReservationAssignment.status == 'Occupied',
-                 ReservationAssignment.id_spot == id_spot)).options(joinedload(Reservation.weekdays)).all()
+                 ReservationAssignment.id_spot == id_spot, Reservation.id_reservation != id_reservation)).options(
+            joinedload(Reservation.weekdays)).all()
 
         b = {}
         for reservation in reservations:
@@ -166,7 +167,8 @@ class ReservationService:
             ReservationAssignment.id_reservation==id_reservation
         ).update({
             ReservationAssignment.status:'Occupied',
-            ReservationAssignment.assisted_by:id_employee
+            ReservationAssignment.assisted_by:id_employee,
+            ReservationAssignment.assisted_datetime: datetime.now()
             }
         )
         self.session.commit()
@@ -179,7 +181,8 @@ class ReservationService:
             ReservationAssignment.id_reservation==id_reservation
         ).update({
             ReservationAssignment.status:'Available',
-            ReservationAssignment.assisted_by:id_employee
+            ReservationAssignment.assisted_by:id_employee,
+            ReservationAssignment.assisted_datetime: datetime.now()
             }
         )
         self.session.commit()

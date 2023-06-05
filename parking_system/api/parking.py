@@ -31,7 +31,7 @@ def get_parking_spot(
     return db_parking_spot
 
 
-@parking_router.get("/", response_model=list[ShowParking], tags=["Parking"])
+@parking_router.get("/", response_model=list[Parking], tags=["Parking"])
 def get_parking_spots(session: Session = Depends(get_db_session)):
     parking_spot = ParkingService(session)
 

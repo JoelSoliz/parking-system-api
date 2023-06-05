@@ -1,3 +1,6 @@
+from datetime import datetime, timedelta
+
+# from services.send_email import send
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.sql import desc, select, and_
 from fastapi import HTTPException, status
@@ -63,3 +66,27 @@ class PayService:
         print(data)
 
         return b
+    
+    def collect_overdue_payments(self, current_page, page_size=20):
+        query_pay = self.session.query(Reservation).join(ReservationAssignment).options(
+            joinedload(Reservation.customer),
+            joinedload(Reservation.pays)
+        ).filter(and_(datetime.now()+timedelta(minutes=60) > ReservationAssignment.assisted_datetime,
+                 ReservationAssignment.status=='Occupied'))
+        
+        offset_value = (current_page - 1) * page_size
+        query = query_pay.limit(page_size).offset(offset_value)
+        query_pay = query.all()
+
+        print(query_pay[1].customer.email)
+
+        # email = [email.customer.email for email in query_pay]
+        # print(list(set(email)))
+
+        if len(query_pay) > 1 and not query_pay[1].pays:
+            results = [{'customer':query.customer, 'price': query.price,
+                        'spot': query.reservation_assignment[0].parking_spots} for query in query_pay]
+            return {'results': results}
+        else:
+            return{'results': []}
+        
