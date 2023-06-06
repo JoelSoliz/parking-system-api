@@ -27,9 +27,9 @@ def get_reservation(id: str, session: Session = Depends(get_db_session),
     return db_reservation
 
 @reservation_router.get("/spot/{id}", response_model=DaysAndDate, tags=["Reservation"])
-def get_reservation_date(id:str, start_date: date, end_date: date, session: Session = Depends(get_db_session)):
+def get_reservation_date(id_spot:str, id_reservation: str, start_date: date, end_date: date, session: Session = Depends(get_db_session)):
     reservation_service = ReservationService(session)
-    resultado = reservation_service.get_reservation_date(id, start_date, end_date)
+    resultado = reservation_service.get_reservation_date(id_spot, id_reservation, start_date, end_date)
 
     return resultado
 

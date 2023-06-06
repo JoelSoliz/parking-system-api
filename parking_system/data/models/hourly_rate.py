@@ -17,6 +17,7 @@ class HourlyRate(Base):
     end_date = Column(Date, nullable=True)
     
     assignment_rate = relationship('AssignmentRate', back_populates='price')
+    reservations = relationship('Reservation', back_populates='price')
 
     def __repr__(self):
         return f"<HourlyRate(id_price='{self.id_price}', hourly_rate={self.hourly_rate}, daily_rate={self.daily_rate}, weekly_rate={self.weekly_rate}, monthly_rate={self.monthly_rate}, annual_rate={self.annual_rate}, start_date='{self.start_date}', end_date='{self.end_date}')>"
