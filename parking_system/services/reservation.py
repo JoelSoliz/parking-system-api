@@ -4,11 +4,13 @@ from sqlalchemy import desc, func, and_, or_
 from sqlalchemy.orm import Session, joinedload
 from fastapi import HTTPException, status
 
+from send_email import send
 from schemas.reservation import ReservationCreate
 from schemas.assignment_reservation import AssignmentUpdate
 from data.models.reservation import Reservation
 from data.models.reservation_assignment import ReservationAssignment
 from data.models.week_day import WeekDay
+from data.models.customer import Customer
 from .utils import generate_id
 from .employee import EmployeeService as employee
 
@@ -39,18 +41,20 @@ class ReservationService:
 
         return data
     
-    def get_reservation_date(self, id_spot: str, id_reservation: str, start_date: date, end_date: date):
+    def get_reservation_date(self, id_spot: str, start_date: date, end_date: date):
         reservations = self.session.query(Reservation).join(ReservationAssignment).filter(
-            and_(or_(and_(start_date >= Reservation.start_date, start_date <= Reservation.end_date), and_(end_date >= Reservation.start_date, end_date <= Reservation.end_date)),
+            and_(or_(and_(start_date >= Reservation.start_date, 
+                          start_date <= Reservation.end_date), 
+                          and_(end_date >= Reservation.start_date, end_date <= Reservation.end_date)),
                  ReservationAssignment.status == 'Occupied',
-                 ReservationAssignment.id_spot == id_spot, Reservation.id_reservation != id_reservation)).options(
+                 ReservationAssignment.id_spot == id_spot)).options(
             joinedload(Reservation.weekdays)).all()
 
         b = {}
         for reservation in reservations:
             b.update(
                 {f"{wd.day}-{str(wd.start_time)}-{str(wd.end_time)}": wd.__dict__ for wd in reservation.weekdays})
-        print(b)
+        
         data = {
             "week_days": list(b.values())
         }
@@ -162,6 +166,12 @@ class ReservationService:
 
         return get_assignment
 
+    def get_email(self, id_reservation):
+        query_email = self.session.query(Reservation).filter(
+            Reservation.id_reservation==id_reservation).first()
+        
+        return [query_email.customer.email]
+        
     def reservation_id_accepted(self, id_reservation, id_employee, get_assignment):
         self.session.query(ReservationAssignment).filter(
             ReservationAssignment.id_reservation==id_reservation
@@ -171,8 +181,10 @@ class ReservationService:
             ReservationAssignment.assisted_datetime: datetime.now()
             }
         )
+        
         self.session.commit()
         self.session.refresh(get_assignment)
+        send(self.get_email(id_reservation), "Su solicitud de reserva fue aceptada", "Parking Spot")
 
         return get_assignment
     
@@ -187,5 +199,6 @@ class ReservationService:
         )
         self.session.commit()
         self.session.refresh(get_assignment)
+        send(self.get_email(id_reservation), "Su solicitud de reserva de un sitio fue rechazada", "Parking Spot")
 
         return get_assignment
