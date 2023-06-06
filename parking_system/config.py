@@ -9,6 +9,9 @@ class Settings(BaseSettings):
     db_user: str
     jwt_secret_key: str
 
+    email: str
+    password: str
+
     class Config:
         env_file = ".env"
 

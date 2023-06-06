@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from api.dependencies import get_current_user, get_db_session
-from schemas.claim import ClaimBase, Claim, ClaimWithCustomer, PaginedClaim
+from schemas.claim import ClaimBase, Claim, ClaimWithCustomer, ClaimPaginated
 from services.claim import ClaimService
 from data.models.customer import Customer
 from data.models.employee import Employee
@@ -25,7 +25,7 @@ def get_claim_detail(id:str, session:Session=Depends(get_db_session),
 
     return claim_service.get_claim_detail(id)
 
-@claim_router.get("/", response_model=list[PaginedClaim], tags=["Claim"])
+@claim_router.get("/", response_model=ClaimPaginated, tags=["Claim"])
 def get_claim_details(current_page:int, session:Session=Depends(get_db_session),
                      user:Union[Employee, Administrator]=Depends(get_current_user)):
     claim_service = ClaimService(session)

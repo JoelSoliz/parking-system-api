@@ -1,3 +1,5 @@
+import math
+
 from sqlalchemy.orm import Session, joinedload
 from .utils import generate_id
 
@@ -21,16 +23,33 @@ class ClaimService:
         query_claim = self.session.query(Claim).options(
             joinedload(Claim.customer)
         ).filter(Claim.status==False)
-
+        
         offset_value = (current_page - 1) * page_size
-        query = query_claim.limit(page_size).offset(offset_value)
-        query_claim = query.all()
+        query_claim.limit(page_size).offset(offset_value).all()
+        count_data = query_claim.count()
 
-        result = [{'claim':{'subject':claim.subject,
-                       'registration_date': claim.registration_date},
+        results = [{'claim':{'subject':claim.subject,
+                       'registration_date': claim.registration_date, 'description': claim.description,
+                       'request': claim.request},
                        'customer':claim.customer} for claim in query_claim]
-        print(result)
-        return result
+        if count_data:
+            data = {
+                'result': results,
+                'current_page': current_page,
+                "total_pages": math.ceil(count_data / page_size),
+                "total_elements": count_data,
+                "element_per_page": page_size
+            }
+        else:
+            data = {
+                'result': [],
+                'current_page': 0,
+                "total_pages": 0,
+                "total_elements": 0,
+                "element_per_page": 0
+            }
+
+        return data
 
     def register_claim(self, author:str, clain: ClaimBase):
         id_claim = generate_id()

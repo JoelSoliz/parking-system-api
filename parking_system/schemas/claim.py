@@ -29,7 +29,16 @@ class Claims(BaseModel):
 class ClaimWithCustomer(BaseModel):
     customer: Customer
     claim: ClaimBase
+    
+    class Config:
+        orm_mode = True
 
-class PaginedClaim(BaseModel):
-    claim: Claims
-    customer: Customer
+class ClaimPaginated(BaseModel):
+    result: list[ClaimWithCustomer]
+    current_page: int
+    total_pages: int
+    total_elements: int
+    element_per_page: int
+
+    class Config:
+        orm_mode = True
