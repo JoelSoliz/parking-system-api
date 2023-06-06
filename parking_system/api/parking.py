@@ -24,9 +24,7 @@ def get_parking_spot(
     parking_service = ParkingService(session)
     db_parking_spot = parking_service.get_parking_and_price(id)
     if not db_parking_spot:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Parking spot not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Parking spot not found")
 
     return db_parking_spot
 
@@ -37,15 +35,18 @@ def get_parking_spots(session: Session = Depends(get_db_session)):
 
     return parking_spot.get_parking_spots()
 
-@parking_router.get("/hours/", response_model=list[BussinesUpdate], tags=["Parking"])
+
+@parking_router.get("/hours/", response_model=list[BussinesHours], tags=["Parking"])
 def get_bussines_hours(session: Session = Depends(get_db_session)):
     db_bussiness_hour = ParkingService(session)
     return db_bussiness_hour.get_hours()
 
+
 @parking_router.get("/spot/type", response_model=list[SpotAndType], tags=["Parking"])
 def get_type_spot(type: str, session: Session = Depends(get_db_session)):
     parking_service = ParkingService(session)
-    return parking_service.get_spot_section(type) 
+    return parking_service.get_spot_section(type)
+
 
 @parking_router.put("/{id}", response_model=BussinesHours, tags=["Parking"])
 def update_hour_parking(
