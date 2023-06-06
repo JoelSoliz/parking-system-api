@@ -29,9 +29,9 @@ class ClaimService:
             .filter(Claim.status == False)
         )
 
-        offset_value = (current_page - 1) * page_size
-        query_claim.limit(page_size).offset(offset_value)
         count_data = query_claim.count()
+        offset_value = (current_page - 1) * page_size
+        query_claim = query_claim.limit(page_size).offset(offset_value)
 
         results = [
             {
