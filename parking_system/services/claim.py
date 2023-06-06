@@ -14,49 +14,66 @@ class ClaimService:
         self.session = session
 
     def get_claim_detail(self, id_claim):
-        query_claim = self.session.query(Claim).options(
-            joinedload(Claim.customer)
-        ).filter(Claim.id_claim==id_claim).first()
-        return {'claim':query_claim, 'customer':query_claim.customer}
-    
-    def get_claim_details(self, current_page:int, page_size=20):
-        query_claim = self.session.query(Claim).options(
-            joinedload(Claim.customer)
-        ).filter(Claim.status==False)
-        
+        query_claim = (
+            self.session.query(Claim)
+            .options(joinedload(Claim.customer))
+            .filter(Claim.id_claim == id_claim)
+            .first()
+        )
+        return {"claim": query_claim, "customer": query_claim.customer}
+
+    def get_claim_details(self, current_page: int, page_size=20):
+        query_claim = (
+            self.session.query(Claim)
+            .options(joinedload(Claim.customer))
+            .filter(Claim.status == False)
+        )
+
         offset_value = (current_page - 1) * page_size
-        query_claim.limit(page_size).offset(offset_value).all()
+        query_claim.limit(page_size).offset(offset_value)
         count_data = query_claim.count()
 
-        results = [{'claim':{'subject':claim.subject,
-                       'registration_date': claim.registration_date, 'description': claim.description,
-                       'request': claim.request},
-                       'customer':claim.customer} for claim in query_claim]
+        results = [
+            {
+                "claim": {
+                    "subject": claim.subject,
+                    "registration_date": claim.registration_date,
+                    "description": claim.description,
+                    "request": claim.request,
+                },
+                "customer": claim.customer,
+            }
+            for claim in query_claim
+        ]
         if count_data:
             data = {
-                'result': results,
-                'current_page': current_page,
+                "result": results,
+                "current_page": current_page,
                 "total_pages": math.ceil(count_data / page_size),
                 "total_elements": count_data,
-                "element_per_page": page_size
+                "element_per_page": page_size,
             }
         else:
             data = {
-                'result': [],
-                'current_page': 0,
+                "result": [],
+                "current_page": 0,
                 "total_pages": 0,
                 "total_elements": 0,
-                "element_per_page": 0
+                "element_per_page": 0,
             }
 
         return data
 
-    def register_claim(self, author:str, clain: ClaimBase):
+    def register_claim(self, author: str, clain: ClaimBase):
         id_claim = generate_id()
-        query_claim = Claim(id_claim=id_claim, subject=clain.subject, 
-                            description=clain.description, request=clain.request,
-                            author=author)
-        
+        query_claim = Claim(
+            id_claim=id_claim,
+            subject=clain.subject,
+            description=clain.description,
+            request=clain.request,
+            author=author,
+        )
+
         self.session.add(query_claim)
         self.session.commit()
         self.session.refresh(query_claim)
