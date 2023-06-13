@@ -19,6 +19,9 @@ class ClaimDate(ClaimBase):
 class Claim(ClaimDate):
     id_claim: str
 
+    class Config:
+        orm_mode = True
+
 class Claims(BaseModel):
     registration_date: datetime
     subject: str
@@ -28,7 +31,7 @@ class Claims(BaseModel):
 
 class ClaimWithCustomer(BaseModel):
     customer: Customer
-    claim: ClaimBase
+    claim: Claim
     
     class Config:
         orm_mode = True

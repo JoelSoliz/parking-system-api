@@ -23,7 +23,7 @@ def get_payments(current_page: int, session: Session=Depends(get_db_session), na
     return pay_servece.receive_payments(current_page, name=name, date=date)
 
 @pay_router.get("/lates/", response_model=PaginatedLatePayment, tags=["Pay"])
-def get_payments(current_page: int, session:Session=Depends(get_db_session)):
+def get_payments_late(current_page: int, session:Session=Depends(get_db_session)):
     pay_servece = PayService(session)
     
     return pay_servece.collect_overdue_payments(current_page)

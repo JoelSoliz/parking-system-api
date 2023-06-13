@@ -1,6 +1,6 @@
 from datetime import date, datetime
 import math
-from sqlalchemy import desc, func, and_, or_
+from sqlalchemy import desc, func, and_, or_, asc
 from sqlalchemy.orm import Session, joinedload
 from fastapi import HTTPException, status
 
@@ -61,15 +61,23 @@ class ReservationService:
 
         return data
 
-    def get_reservations(self, current_page, page_count=10):
-        result_query = self.session.query(Reservation, ReservationAssignment.id_spot, ReservationAssignment.status).join(ReservationAssignment).filter(
-            Reservation.start_date >= date.today())
+    def get_reservations(self, current_page, page_count=10, status = None):
+        result_query = self.session.query(Reservation, ReservationAssignment.id_spot, 
+                                          ReservationAssignment.status).join(
+            ReservationAssignment)
+        
+        if status:
+            result_query = result_query.filter(and_(Reservation.start_date >= date.today(),
+                                     ReservationAssignment.status==status))
+        else :
+            result_query = result_query.filter(Reservation.start_date >= date.today())
+
         results = (
-            result_query.options(joinedload(Reservation.customer),joinedload(Reservation.reservation_assignment))
-            .order_by(desc(func.timediff(Reservation.end_date, Reservation.start_date)))
+            result_query.options(joinedload(Reservation.customer),
+            joinedload(Reservation.reservation_assignment))
+            .order_by(asc(func.timediff(Reservation.end_date, Reservation.start_date)))
             .offset((current_page - 1) * page_count)
             .limit(page_count)
-            .all()
         )
         count_data = result_query.count()
         b= [{"reservation": {"id_reservation": resultado[0].id_reservation, 
