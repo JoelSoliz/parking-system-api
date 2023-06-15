@@ -17,3 +17,4 @@ from .user import User
 from .week_day import WeekDay
 from .reservation_assignment import ReservationAssignment
 from .assignment_rate import AssignmentRate
+from .parking_type import ParkingType

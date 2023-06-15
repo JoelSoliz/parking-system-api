@@ -6,6 +6,10 @@ from data.models.business_hours import BusinessHours
 from data.models.assignment_rate import AssignmentRate
 from data.models.parking_spot import ParkingSpot
 from data.models.hourly_rate import HourlyRate
+from data.models.parking_type import ParkingType
+from data.models.reservation_assignment import ReservationAssignment
+from data.models.reservation import Reservation
+from data.models.week_day import WeekDay
 
 from .utils import generate_id
 
@@ -35,9 +39,13 @@ class ParkingService:
     def register_parking_spot(self, parking: Parking):
         id_spot = generate_id()
         db_parking_spot = ParkingSpot(id_spot=id_spot, name=parking.name,
-                                      section=parking.section, type=parking.type, 
+                                      section=parking.section, type_spot=parking.type_spot, 
                                       coordinate=parking.coordinate)
-        self.register_assignment_rate(id_spot, parking.type)
+        
+        query_type = self.session.query(ParkingType).filter(
+            ParkingType.id_spot_type==parking.type_spot).first()
+
+        self.register_assignment_rate(id_spot, query_type.type)
 
         self.session.add(db_parking_spot)
         self.session.commit()   
@@ -91,10 +99,11 @@ class ParkingService:
 
         return get_hour
     
+    #--------------verificar------------
     def get_spot_section(self, type: str):
         type_query = self.session.query(ParkingSpot).options(
             joinedload(ParkingSpot.assignment_rate)
-        ).filter(ParkingSpot.type==type).all()
+        ).filter(ParkingSpot.type_spot==type).all()
         print(type_query[0].assignment_rate[0].price)
         
         results = [{'spot':{'id_spot':type.id_spot, 'name': type.name, 
@@ -102,3 +111,18 @@ class ParkingService:
                       'section': type.section, 'type': type.type},
                       'hourly_rate': type.assignment_rate[0].price} for type in type_query]
         return results
+
+    def get_spot_date(self, id_spot: str):
+        spot_query = self.session.query(ParkingSpot).\
+            join(ParkingSpot.reservation_assignment).\
+            join(ReservationAssignment.reservations).\
+            join(Reservation.weekdays).\
+            filter(ParkingSpot.id_spot==id_spot).all()
+
+        data ={
+            "parking": spot_query[0],
+            "reservations": [reservation.reservations
+                             for reservation in spot_query[0].reservation_assignment]
+        }
+
+        return data

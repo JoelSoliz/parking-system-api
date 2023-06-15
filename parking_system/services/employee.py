@@ -35,6 +35,7 @@ class EmployeeService():
         results = result_query.order_by(Employee.hire_date.desc()).offset(
             (current_page - 1) * page_count).limit(page_count).all()
         count_data = result_query.count()
+        
         if count_data:
             data = {
                 'results': [employee.__dict__ for employee in results],

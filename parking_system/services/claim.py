@@ -27,7 +27,7 @@ class ClaimService:
             self.session.query(Claim)
             .options(joinedload(Claim.customer))
             .filter(Claim.status == False)
-        )
+        ).order_by(Claim.registration_date.asc())
 
         count_data = query_claim.count()
         offset_value = (current_page - 1) * page_size
@@ -36,6 +36,7 @@ class ClaimService:
         results = [
             {
                 "claim": {
+                    "id_claim": claim.id_claim,
                     "subject": claim.subject,
                     "registration_date": claim.registration_date,
                     "description": claim.description,

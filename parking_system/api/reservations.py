@@ -38,6 +38,7 @@ def get_reservations(
     current_page: int,
     session: Session = Depends(get_db_session),
     user: Union[Administrator, Employee] = Depends(get_current_user),
+    status = None
 ):
     role_service = ReservationService(session)
     if not isinstance(user, Administrator) and not isinstance(user, Employee):
@@ -46,7 +47,7 @@ def get_reservations(
             detail="You don't have permission to list reservations.",
         )
 
-    return role_service.get_reservations(current_page)
+    return role_service.get_reservations(current_page, status=status)
 
 @reservation_router.post("/reservation", response_model=Reservation, tags=["Reservation"])
 def register_reservation(reservation: ReservationCreate, 
