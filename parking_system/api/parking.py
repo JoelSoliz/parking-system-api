@@ -16,13 +16,13 @@ from data.models.administrator import Administrator
 parking_router = APIRouter(prefix="/parking")
 
 
-@parking_router.get("/{id}", response_model=AssignmentBase, tags=["Parking"])
+@parking_router.get("/{id}", response_model=ParkingDate, tags=["Parking"])
 def get_parking_spot(
     id: str,
     session: Session = Depends(get_db_session),
 ):
     parking_service = ParkingService(session)
-    db_parking_spot = parking_service.get_parking_and_price(id)
+    db_parking_spot = parking_service.get_parking_spot(id)
     if not db_parking_spot:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Parking spot not found")
 
@@ -42,16 +42,11 @@ def get_bussines_hours(session: Session = Depends(get_db_session)):
     return db_bussiness_hour.get_hours()
 
 
-@parking_router.get("/spot/type", response_model=list[SpotAndType], tags=["Parking"])
+@parking_router.get("/spot/type", response_model=SpotAndType, tags=["Parking"])
 def get_type_spot(type: str, session: Session = Depends(get_db_session)):
     parking_service = ParkingService(session)
     return parking_service.get_spot_section(type)
 
-@parking_router.get("/spot/date", response_model=ParkingDate, tags=["Parking"])
-def get_spot_date(id_spot: str, session: Session = Depends(get_db_session)):
-    parking_service = ParkingService(session)
-
-    return parking_service.get_spot_date(id_spot)
 
 @parking_router.put("/{id}", response_model=BussinesHours, tags=["Parking"])
 def update_hour_parking(

@@ -61,7 +61,7 @@ class ReservationService:
 
         return data
 
-    def get_reservations(self, current_page, page_count=10, status = None):
+    def get_reservations(self, current_page, page_count=7, status = None):
         result_query = self.session.query(Reservation, ReservationAssignment.id_spot, 
                                           ReservationAssignment.status).join(
             ReservationAssignment)
@@ -192,7 +192,9 @@ class ReservationService:
         
         self.session.commit()
         self.session.refresh(get_assignment)
-        send(self.get_email(id_reservation), "Su solicitud de reserva fue aceptada", "Parking Spot")
+        send(self.get_email(id_reservation), 
+             "¡Nos complace informarle que su solicitud de reserva ha sido aceptada! Queremos agradecerle por elegir nuestros servicios y estamos encantados de poder atenderle.", 
+             "Parking Spot")
 
         return get_assignment
     
@@ -207,6 +209,8 @@ class ReservationService:
         )
         self.session.commit()
         self.session.refresh(get_assignment)
-        send(self.get_email(id_reservation), "Su solicitud de reserva de un sitio fue rechazada", "Parking Spot")
+        send(self.get_email(id_reservation), 
+             "Estimado usuario: Me pongo en contacto con respecto a su solicitud de reserva reciente.Lamentablemente, debo informarle que su solicitud de reserva ha sido rechazada.", 
+             "Parking Spot")
 
         return get_assignment

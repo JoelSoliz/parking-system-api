@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     email: str
     password: str
 
+    webapp_url: str
+
     class Config:
         env_file = ".env"
 

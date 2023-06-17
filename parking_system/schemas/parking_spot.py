@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, time
 
 from pydantic import BaseModel
 
@@ -37,16 +37,31 @@ class ShowParking(ParkingBase):
         orm_mode = True
 
 class ReservationDates(BaseModel):
-    id_reservation: str
     start_date: date
     end_date: date
 
     class Config:
         orm_mode = True
 
+class Days(BaseModel):
+    day: str
+    start_time: time
+    end_time: time
+
+    class Config:
+        orm_mode = True
+
+class Reservations(BaseModel):
+    reservation: ReservationDates
+    days: list[Days]
+
+    class Config:
+        orm_mode = True
+
 class ParkingDate(BaseModel):
     parking: ParkingBase
-    reservations: list[ReservationDates]
+    reservations: list[Reservations]
+    
 
     class Config:
         orm_mode = True
