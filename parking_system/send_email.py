@@ -39,8 +39,6 @@ def send(destination, message, asunto):
                   }}
 
                   .url{{
-                    color: red;
-                    text-decoration: none;
                     text-align: center;
                   }}
 
@@ -71,7 +69,3 @@ def send(destination, message, asunto):
             msg['From'] = setting.email
             msg['To'] = email
             server.send_message(msg)
-
-send(["riveramauro278@gmail.com"], 
-     "¡Nos complace informarle que su solicitud de reserva ha sido aceptada! Queremos agradecerle por elegir nuestros servicios y estamos encantados de poder atenderle.", 
-     "ParkingSpot")
