@@ -22,12 +22,12 @@ class ClaimService:
         )
         return {"claim": query_claim, "customer": query_claim.customer}
 
-    def get_claim_details(self, current_page: int, page_size=20):
+    def get_claim_details(self, current_page: int, page_size=7):
         query_claim = (
             self.session.query(Claim)
             .options(joinedload(Claim.customer))
             .filter(Claim.status == False)
-        ).order_by(Claim.registration_date.asc())
+        ).order_by(Claim.registration_date.desc())
 
         count_data = query_claim.count()
         offset_value = (current_page - 1) * page_size

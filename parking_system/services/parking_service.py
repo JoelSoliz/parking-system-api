@@ -19,17 +19,23 @@ class ParkingService:
         self.session = session
 
 
-    def get_parking_and_price(self, id_spot: str):
-        parking_spot = self.session.query(ParkingSpot).options(
-            joinedload(ParkingSpot.assignment_rate)
-        ).filter(ParkingSpot.id_spot == id_spot).first()
-        parking_with_price = {
-            "parking_spot": parking_spot,
-            "prices": parking_spot.assignment_rate[0].price
+    def get_parking_spot(self, id_spot: str):
+        spot_query = self.session.query(ParkingSpot).options(
+            joinedload(ParkingSpot.reservation_assignment).joinedload(
+            ReservationAssignment.reservations
+            ).joinedload(
+            Reservation.weekdays
+            )
+        ).filter(ParkingSpot.id_spot==id_spot).all()
+        
+        data ={
+            "parking": spot_query[0],
+            "reservations": [{"reservation":reservation.reservations, 
+                              "days": reservation.reservations.weekdays}
+                             for reservation in spot_query[0].reservation_assignment]
         }
 
-        return parking_with_price
-
+        return data
 
     def get_parking_spots(self):
         result_query = self.session.query(ParkingSpot).all()
@@ -111,18 +117,3 @@ class ParkingService:
                       'section': type.section, 'type': type.type},
                       'hourly_rate': type.assignment_rate[0].price} for type in type_query]
         return results
-
-    def get_spot_date(self, id_spot: str):
-        spot_query = self.session.query(ParkingSpot).\
-            join(ParkingSpot.reservation_assignment).\
-            join(ReservationAssignment.reservations).\
-            join(Reservation.weekdays).\
-            filter(ParkingSpot.id_spot==id_spot).all()
-
-        data ={
-            "parking": spot_query[0],
-            "reservations": [reservation.reservations
-                             for reservation in spot_query[0].reservation_assignment]
-        }
-
-        return data

@@ -27,7 +27,7 @@ class EmployeeService():
 
         return bool(user)
 
-    def get_employees(self, current_page, page_count=10, name=None):
+    def get_employees(self, current_page, page_count=7, name=None):
         result_query = self.session.query(Employee)
         if name:
             result_query = result_query.filter(Employee.name.like(f'%{name}%'))
