@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from sqlalchemy.orm import joinedload
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import joinedload, Session
+from sqlalchemy import and_
+from fastapi import HTTPException, status
 from schemas.parking_spot import Parking
 from schemas.business_hours import BussinesHours, BussinesUpdateA
 from data.models.business_hours import BusinessHours
@@ -22,14 +23,21 @@ class ParkingService:
 
 
     def get_parking_spot(self, id_spot: str):
-        spot_query = self.session.query(ParkingSpot).options(
+        spot_query = self.session.query(ParkingSpot).join(
+            ReservationAssignment.parking_spots).options(
             joinedload(ParkingSpot.reservation_assignment).joinedload(
             ReservationAssignment.reservations
             ).joinedload(
             Reservation.weekdays
             )
-        ).filter(ParkingSpot.id_spot==id_spot, Reservation.start_date>=datetime.now()).all()
+        ).filter(ParkingSpot.id_spot==id_spot, 
+                 Reservation.start_date>=datetime.now(),
+                 Reservation.end_date>=datetime.now(),
+                 ReservationAssignment.status=="Occupied").all()
         
+        if not spot_query:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Parking spot not found")
+
         data ={
             "parking": spot_query[0],
             "reservations": [{"reservation":reservation.reservations, 
