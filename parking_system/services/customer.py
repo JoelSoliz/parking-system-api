@@ -29,7 +29,7 @@ class CustomerService():
 
         return bool(user)
 
-    def get_customers(self, current_page, page_count=10, name=None):
+    def get_customers(self, current_page, page_count=7, name=None):
         result_query = self.session.query(Customer)
 
         if name:

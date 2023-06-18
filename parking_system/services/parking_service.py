@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm import Session
 from schemas.parking_spot import Parking
@@ -26,7 +28,7 @@ class ParkingService:
             ).joinedload(
             Reservation.weekdays
             )
-        ).filter(ParkingSpot.id_spot==id_spot).all()
+        ).filter(ParkingSpot.id_spot==id_spot, Reservation.start_date>=datetime.now()).all()
         
         data ={
             "parking": spot_query[0],

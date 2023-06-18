@@ -75,7 +75,7 @@ class ReservationService:
         results = (
             result_query.options(joinedload(Reservation.customer),
             joinedload(Reservation.reservation_assignment))
-            .order_by(asc(func.timediff(Reservation.end_date, Reservation.start_date)))
+            .order_by(asc(Reservation.create_at))
             .offset((current_page - 1) * page_count)
             .limit(page_count)
         )
