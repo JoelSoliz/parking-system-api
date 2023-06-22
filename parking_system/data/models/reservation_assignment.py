@@ -1,7 +1,7 @@
-from datetime import datetime
-
 from sqlalchemy import Column, String, Enum, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+
 from data import Base
 
 
@@ -11,7 +11,7 @@ class ReservationAssignment(Base):
     status = Column(Enum("Reserved", "Occupied", "Available"), nullable=False)
     assisted_by = Column(String(4), nullable=True)
     assisted_datetime = Column(DateTime(), nullable=True)
-    date_created = Column(DateTime(), default=datetime.now())
+    date_created = Column(DateTime(), default=func.now())
     id_spot = Column(String(4), ForeignKey("parking_spot.id_spot"))
     id_reservation = Column(String(4), ForeignKey("reservation.id_reservation"))
 
