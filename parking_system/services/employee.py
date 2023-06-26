@@ -7,6 +7,7 @@ from schemas.employee import CreateEmployee, Employee as EmployeeSchema
 from .constants import ROLES_ID
 from .user import UserService
 from .utils import generate_id, get_hashed_password
+from send_email import send
 
 EMPLOYEE_TYPE = 'employee'
 
@@ -64,7 +65,7 @@ class EmployeeService():
                                phone=user.phone, role=ROLES_ID.get(EMPLOYEE_TYPE), user_type=EMPLOYEE_TYPE,
                                registered_by=registered_by, hire_date=user.hire_date, salary=user.salary)
         self.session.add(db_employee)
+        send([user.email], f"Sus credenciales para iniciar sesión es: \nCorreo electrónico: {user.email}\nContraseña: {user.password}", "Parqueo Mayor de San Simón")
         self.session.commit()
         self.session.refresh(db_employee)
-
         return db_employee
